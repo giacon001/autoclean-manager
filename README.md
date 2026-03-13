@@ -350,35 +350,35 @@ https://localhost:xxxx/swagger
 
 ### Usuários
 
-- `GET /api/users`
-- `GET /api/users/{id}`
-- `POST /api/users`
-- `PUT /api/users/{id}`
-- `DELETE /api/users/{id}`
+- `GET /api/usuarios`
+- `GET /api/usuarios/{id}`
+- `POST /api/usuarios`
+- `PUT /api/usuarios/{id}`
+- `DELETE /api/usuarios/{id}`
 
 ### Veículos
 
-- `GET /api/vehicles`
-- `GET /api/vehicles/{id}`
-- `POST /api/vehicles`
-- `PUT /api/vehicles/{id}`
-- `DELETE /api/vehicles/{id}`
+- `GET /api/veiculos`
+- `GET /api/veiculos/{id}`
+- `POST /api/veiculos`
+- `PUT /api/veiculos/{id}`
+- `DELETE /api/veiculos/{id}`
 
 ### Tipos de Lavagem
 
-- `GET /api/wash-types`
-- `GET /api/wash-types/{id}`
-- `POST /api/wash-types`
-- `PUT /api/wash-types/{id}`
-- `DELETE /api/wash-types/{id}`
+- `GET /api/tipos-lavagem`
+- `GET /api/tipos-lavagem/{id}`
+- `POST /api/tipos-lavagem`
+- `PUT /api/tipos-lavagem/{id}`
+- `DELETE /api/tipos-lavagem/{id}`
 
 ### Agendamentos
 
-- `GET /api/appointments`
-- `GET /api/appointments/{id}`
-- `POST /api/appointments`
-- `PUT /api/appointments/{id}`
-- `DELETE /api/appointments/{id}`
+- `GET /api/agendamentos`
+- `GET /api/agendamentos/{id}`
+- `POST /api/agendamentos`
+- `PUT /api/agendamentos/{id}`
+- `DELETE /api/agendamentos/{id}`
 
 ## Regras implementadas na simulacao em memoria
 
@@ -397,19 +397,19 @@ Arquivo pronto para importacao no Postman:
 
 Inclui requests de CRUD completo para:
 
-- Users
-- Vehicles
-- Wash Types
-- Appointments
+- Usuarios
+- Veiculos
+- Tipos de Lavagem
+- Agendamentos
 
-A collection utiliza variaveis (`baseUrl`, `userId`, `vehicleId`, `washTypeId`, `appointmentId`) e scripts de teste para salvar IDs automaticamente apos o `POST`.
+A collection utiliza variaveis (`baseUrl`, `usuarioId`, `veiculoId`, `tipoLavagemId`, `appointmentId`) e scripts de teste para salvar IDs automaticamente apos o `POST`.
 
 Sugestao de uso:
 
-1. Execute primeiro o `POST - Create User`.
-2. Em seguida execute `POST - Create Vehicle`.
-3. Crie/atualize tipo de lavagem em `Wash Types`.
-4. Por fim execute `POST - Create Appointment`.
+1. Execute primeiro o `POST - Criar Usuario`.
+2. Em seguida execute `POST - Criar Veiculo`.
+3. Crie/atualize tipo de lavagem em `Tipos de Lavagem`.
+4. Por fim execute `POST - Criar Agendamento`.
 
 ---
 
@@ -418,12 +418,12 @@ Sugestao de uso:
 Entidades principais do sistema:
 
 ```
-Users
-Vehicles
-Appointments
-Services
-WashStatus
-Payments (futuro)
+Usuarios
+Veiculos
+Agendamentos
+Servicos
+StatusLavagem
+Pagamentos (futuro)
 ```
 
 Relacionamento simplificado:

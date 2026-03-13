@@ -1,6 +1,6 @@
 namespace AutocleanManager.Api.Data;
 
-public static class PriceCalculator
+public static class CalculadoraPreco
 {
     public static decimal CalculateTotalPrice(decimal basePrice, string dirtLevel)
     {

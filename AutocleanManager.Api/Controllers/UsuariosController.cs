@@ -6,33 +6,33 @@ using Microsoft.AspNetCore.Mvc;
 namespace AutocleanManager.Api.Controllers;
 
 [ApiController]
-[Route("api/users")]
-public sealed class UsersController(InMemoryDataStore store) : ControllerBase
+[Route("api/usuarios")]
+public sealed class UsuariosController(ArmazenamentoEmMemoria store) : ControllerBase
 {
     [HttpGet]
-    public ActionResult<IEnumerable<User>> GetAll()
+    public ActionResult<IEnumerable<Usuario>> GetAll()
     {
         return Ok(store.Users);
     }
 
     [HttpGet("{id:int}")]
-    public ActionResult<User> GetById(int id)
+    public ActionResult<Usuario> GetById(int id)
     {
-        var user = store.Users.FirstOrDefault(u => u.Id == id);
-        if (user is null)
+        var Usuario = store.Users.FirstOrDefault(u => u.Id == id);
+        if (Usuario is null)
         {
             return NotFound(new { message = "Usuario nao encontrado." });
         }
 
-        return Ok(user);
+        return Ok(Usuario);
     }
 
     [HttpPost]
-    public ActionResult<User> Create([FromBody] CreateUserRequest request)
+    public ActionResult<Usuario> Create([FromBody] CriarUsuarioRequest request)
     {
-        if (string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrWhiteSpace(request.Email))
+        if (string.IsNullOrWhiteSpace(request.Nome) || string.IsNullOrWhiteSpace(request.Email))
         {
-            return BadRequest(new { message = "Name e Email sao obrigatorios." });
+            return BadRequest(new { message = "Nome e email sao obrigatorios." });
         }
 
         var emailInUse = store.Users.Any(u => u.Email.Equals(request.Email, StringComparison.OrdinalIgnoreCase));
@@ -41,30 +41,30 @@ public sealed class UsersController(InMemoryDataStore store) : ControllerBase
             return Conflict(new { message = "Email ja cadastrado." });
         }
 
-        var user = new User
+        var Usuario = new Usuario
         {
             Id = store.NextUserId(),
-            Name = request.Name.Trim(),
+            Name = request.Nome.Trim(),
             Email = request.Email.Trim(),
-            Role = string.IsNullOrWhiteSpace(request.Role) ? "Cliente" : request.Role.Trim()
+            Role = string.IsNullOrWhiteSpace(request.Papel) ? "Cliente" : request.Papel.Trim()
         };
 
-        store.Users.Add(user);
-        return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+        store.Users.Add(Usuario);
+        return CreatedAtAction(nameof(GetById), new { id = Usuario.Id }, Usuario);
     }
 
     [HttpPut("{id:int}")]
-    public ActionResult<User> Update(int id, [FromBody] UpdateUserRequest request)
+    public ActionResult<Usuario> Update(int id, [FromBody] AtualizarUsuarioRequest request)
     {
-        var user = store.Users.FirstOrDefault(u => u.Id == id);
-        if (user is null)
+        var Usuario = store.Users.FirstOrDefault(u => u.Id == id);
+        if (Usuario is null)
         {
             return NotFound(new { message = "Usuario nao encontrado." });
         }
 
-        if (string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrWhiteSpace(request.Email))
+        if (string.IsNullOrWhiteSpace(request.Nome) || string.IsNullOrWhiteSpace(request.Email))
         {
-            return BadRequest(new { message = "Name e Email sao obrigatorios." });
+            return BadRequest(new { message = "Nome e email sao obrigatorios." });
         }
 
         var emailInUse = store.Users.Any(u => u.Id != id && u.Email.Equals(request.Email, StringComparison.OrdinalIgnoreCase));
@@ -73,21 +73,21 @@ public sealed class UsersController(InMemoryDataStore store) : ControllerBase
             return Conflict(new { message = "Email ja cadastrado." });
         }
 
-        user.Name = request.Name.Trim();
-        user.Email = request.Email.Trim();
-        if (!string.IsNullOrWhiteSpace(request.Role))
+        Usuario.Name = request.Nome.Trim();
+        Usuario.Email = request.Email.Trim();
+        if (!string.IsNullOrWhiteSpace(request.Papel))
         {
-            user.Role = request.Role.Trim();
+            Usuario.Role = request.Papel.Trim();
         }
 
-        return Ok(user);
+        return Ok(Usuario);
     }
 
     [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
-        var user = store.Users.FirstOrDefault(u => u.Id == id);
-        if (user is null)
+        var Usuario = store.Users.FirstOrDefault(u => u.Id == id);
+        if (Usuario is null)
         {
             return NotFound(new { message = "Usuario nao encontrado." });
         }
@@ -99,7 +99,7 @@ public sealed class UsersController(InMemoryDataStore store) : ControllerBase
             return Conflict(new { message = "Nao e possivel remover usuario com veiculos ou agendamentos vinculados." });
         }
 
-        store.Users.Remove(user);
+        store.Users.Remove(Usuario);
         return NoContent();
     }
 }

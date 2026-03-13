@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace AutocleanManager.Api.Controllers;
 
 [ApiController]
-[Route("api/appointments")]
-public sealed class AppointmentsController(InMemoryDataStore store) : ControllerBase
+[Route("api/agendamentos")]
+public sealed class AgendamentosController(ArmazenamentoEmMemoria store) : ControllerBase
 {
     private static readonly HashSet<string> AllowedDirtLevels =
     [
@@ -28,101 +28,101 @@ public sealed class AppointmentsController(InMemoryDataStore store) : Controller
     ];
 
     [HttpGet]
-    public ActionResult<IEnumerable<Appointment>> GetAll()
+    public ActionResult<IEnumerable<Agendamento>> GetAll()
     {
         return Ok(store.Appointments);
     }
 
     [HttpGet("{id:int}")]
-    public ActionResult<Appointment> GetById(int id)
+    public ActionResult<Agendamento> GetById(int id)
     {
-        var appointment = store.Appointments.FirstOrDefault(a => a.Id == id);
-        if (appointment is null)
+        var Agendamento = store.Appointments.FirstOrDefault(a => a.Id == id);
+        if (Agendamento is null)
         {
             return NotFound(new { message = "Agendamento nao encontrado." });
         }
 
-        return Ok(appointment);
+        return Ok(Agendamento);
     }
 
     [HttpPost]
-    public ActionResult<Appointment> Create([FromBody] CreateAppointmentRequest request)
+    public ActionResult<Agendamento> Create([FromBody] CriarAgendamentoRequest request)
     {
         var validation = ValidateRequest(
-            request.UserId,
-            request.VehicleId,
-            request.WashTypeId,
-            request.DirtLevel,
+            request.UsuarioId,
+            request.VeiculoId,
+            request.TipoLavagemId,
+            request.NivelSujeira,
             request.Status,
-            request.ScheduledAt,
+            request.DataHoraAgendada,
             null);
         if (validation is not null)
         {
             return validation;
         }
 
-        var washType = store.WashTypes.First(w => w.Id == request.WashTypeId);
-        var appointment = new Appointment
+        var TipoLavagem = store.WashTypes.First(w => w.Id == request.TipoLavagemId);
+        var Agendamento = new Agendamento
         {
             Id = store.NextAppointmentId(),
-            UserId = request.UserId,
-            VehicleId = request.VehicleId,
-            WashTypeId = request.WashTypeId,
-            DirtLevel = request.DirtLevel.Trim(),
-            ScheduledAt = request.ScheduledAt,
+            UserId = request.UsuarioId,
+            VehicleId = request.VeiculoId,
+            WashTypeId = request.TipoLavagemId,
+            DirtLevel = request.NivelSujeira.Trim(),
+            ScheduledAt = request.DataHoraAgendada,
             Status = request.Status.Trim(),
-            TotalPrice = PriceCalculator.CalculateTotalPrice(washType.BasePrice, request.DirtLevel)
+            TotalPrice = CalculadoraPreco.CalculateTotalPrice(TipoLavagem.BasePrice, request.NivelSujeira)
         };
 
-        store.Appointments.Add(appointment);
-        return CreatedAtAction(nameof(GetById), new { id = appointment.Id }, appointment);
+        store.Appointments.Add(Agendamento);
+        return CreatedAtAction(nameof(GetById), new { id = Agendamento.Id }, Agendamento);
     }
 
     [HttpPut("{id:int}")]
-    public ActionResult<Appointment> Update(int id, [FromBody] UpdateAppointmentRequest request)
+    public ActionResult<Agendamento> Update(int id, [FromBody] AtualizarAgendamentoRequest request)
     {
-        var appointment = store.Appointments.FirstOrDefault(a => a.Id == id);
-        if (appointment is null)
+        var Agendamento = store.Appointments.FirstOrDefault(a => a.Id == id);
+        if (Agendamento is null)
         {
             return NotFound(new { message = "Agendamento nao encontrado." });
         }
 
         var validation = ValidateRequest(
-            request.UserId,
-            request.VehicleId,
-            request.WashTypeId,
-            request.DirtLevel,
+            request.UsuarioId,
+            request.VeiculoId,
+            request.TipoLavagemId,
+            request.NivelSujeira,
             request.Status,
-            request.ScheduledAt,
+            request.DataHoraAgendada,
             id);
         if (validation is not null)
         {
             return validation;
         }
 
-        var washType = store.WashTypes.First(w => w.Id == request.WashTypeId);
+        var TipoLavagem = store.WashTypes.First(w => w.Id == request.TipoLavagemId);
 
-        appointment.UserId = request.UserId;
-        appointment.VehicleId = request.VehicleId;
-        appointment.WashTypeId = request.WashTypeId;
-        appointment.DirtLevel = request.DirtLevel.Trim();
-        appointment.ScheduledAt = request.ScheduledAt;
-        appointment.Status = request.Status.Trim();
-        appointment.TotalPrice = PriceCalculator.CalculateTotalPrice(washType.BasePrice, request.DirtLevel);
+        Agendamento.UserId = request.UsuarioId;
+        Agendamento.VehicleId = request.VeiculoId;
+        Agendamento.WashTypeId = request.TipoLavagemId;
+        Agendamento.DirtLevel = request.NivelSujeira.Trim();
+        Agendamento.ScheduledAt = request.DataHoraAgendada;
+        Agendamento.Status = request.Status.Trim();
+        Agendamento.TotalPrice = CalculadoraPreco.CalculateTotalPrice(TipoLavagem.BasePrice, request.NivelSujeira);
 
-        return Ok(appointment);
+        return Ok(Agendamento);
     }
 
     [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
-        var appointment = store.Appointments.FirstOrDefault(a => a.Id == id);
-        if (appointment is null)
+        var Agendamento = store.Appointments.FirstOrDefault(a => a.Id == id);
+        if (Agendamento is null)
         {
             return NotFound(new { message = "Agendamento nao encontrado." });
         }
 
-        store.Appointments.Remove(appointment);
+        store.Appointments.Remove(Agendamento);
         return NoContent();
     }
 
@@ -137,7 +137,7 @@ public sealed class AppointmentsController(InMemoryDataStore store) : Controller
     {
         if (userId <= 0 || vehicleId <= 0 || washTypeId <= 0)
         {
-            return BadRequest(new { message = "UserId, VehicleId e WashTypeId sao obrigatorios." });
+            return BadRequest(new { message = "UsuarioId, veiculoId e tipoLavagemId sao obrigatorios." });
         }
 
         if (!store.Users.Any(u => u.Id == userId))
@@ -145,13 +145,13 @@ public sealed class AppointmentsController(InMemoryDataStore store) : Controller
             return BadRequest(new { message = "Usuario informado nao existe." });
         }
 
-        var vehicle = store.Vehicles.FirstOrDefault(v => v.Id == vehicleId);
-        if (vehicle is null)
+        var Veiculo = store.Vehicles.FirstOrDefault(v => v.Id == vehicleId);
+        if (Veiculo is null)
         {
             return BadRequest(new { message = "Veiculo informado nao existe." });
         }
 
-        if (vehicle.UserId != userId)
+        if (Veiculo.UserId != userId)
         {
             return BadRequest(new { message = "Veiculo nao pertence ao usuario informado." });
         }
@@ -163,7 +163,7 @@ public sealed class AppointmentsController(InMemoryDataStore store) : Controller
 
         if (string.IsNullOrWhiteSpace(dirtLevel) || !AllowedDirtLevels.Contains(dirtLevel.Trim()))
         {
-            return BadRequest(new { message = "DirtLevel invalido. Use: Leve, Media ou Pesada." });
+            return BadRequest(new { message = "Nivel de sujeira invalido. Use: Leve, Media ou Pesada." });
         }
 
         if (string.IsNullOrWhiteSpace(status) || !AllowedStatuses.Contains(status.Trim()))
@@ -173,7 +173,7 @@ public sealed class AppointmentsController(InMemoryDataStore store) : Controller
 
         if (scheduledAt == default)
         {
-            return BadRequest(new { message = "ScheduledAt e obrigatorio." });
+            return BadRequest(new { message = "Data e horario do agendamento sao obrigatorios." });
         }
 
         var alreadyBooked = store.Appointments.Any(a =>

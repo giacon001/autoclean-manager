@@ -1,7 +1,8 @@
-namespace AutocleanManager.Api.Models.Requests;
+namespace AutocleanManager.Api.Models;
 
-public sealed class UpdateVehicleRequest
+public sealed class Veiculo
 {
+    public int Id { get; set; }
     public int UserId { get; set; }
     public string Brand { get; set; } = string.Empty;
     public string Model { get; set; } = string.Empty;

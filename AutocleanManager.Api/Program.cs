@@ -2,7 +2,7 @@ using AutocleanManager.Api.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSingleton<InMemoryDataStore>();
+builder.Services.AddSingleton<ArmazenamentoEmMemoria>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

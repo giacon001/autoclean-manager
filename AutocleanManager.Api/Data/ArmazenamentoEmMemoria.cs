@@ -2,7 +2,7 @@ using AutocleanManager.Api.Models;
 
 namespace AutocleanManager.Api.Data;
 
-public sealed class InMemoryDataStore
+public sealed class ArmazenamentoEmMemoria
 {
     private readonly object _sync = new();
 
@@ -11,31 +11,31 @@ public sealed class InMemoryDataStore
     private int _nextWashTypeId = 4;
     private int _nextAppointmentId = 4;
 
-    public List<User> Users { get; } =
+    public List<Usuario> Users { get; } =
     [
-        new User { Id = 1, Name = "Joao Silva", Email = "joao@email.com", Role = "Cliente" },
-        new User { Id = 2, Name = "Ana Martins", Email = "ana@email.com", Role = "Cliente" },
-        new User { Id = 3, Name = "Carlos Lima", Email = "carlos@email.com", Role = "Funcionario" }
+        new Usuario { Id = 1, Name = "Joao Silva", Email = "joao@email.com", Role = "Cliente" },
+        new Usuario { Id = 2, Name = "Ana Martins", Email = "ana@email.com", Role = "Cliente" },
+        new Usuario { Id = 3, Name = "Carlos Lima", Email = "carlos@email.com", Role = "Funcionario" }
     ];
 
-    public List<Vehicle> Vehicles { get; } =
+    public List<Veiculo> Vehicles { get; } =
     [
-        new Vehicle { Id = 1, UserId = 1, Brand = "Fiat", Model = "Argo", Plate = "ABC1D23", Color = "Prata", Year = 2021 },
-        new Vehicle { Id = 2, UserId = 1, Brand = "Honda", Model = "Civic", Plate = "HIJ7K89", Color = "Preto", Year = 2020 },
-        new Vehicle { Id = 3, UserId = 2, Brand = "Volkswagen", Model = "Polo", Plate = "EFG4H56", Color = "Branco", Year = 2022 },
-        new Vehicle { Id = 4, UserId = 2, Brand = "Toyota", Model = "Corolla", Plate = "LMN0P12", Color = "Cinza", Year = 2023 }
+        new Veiculo { Id = 1, UserId = 1, Brand = "Fiat", Model = "Argo", Plate = "ABC1D23", Color = "Prata", Year = 2021 },
+        new Veiculo { Id = 2, UserId = 1, Brand = "Honda", Model = "Civic", Plate = "HIJ7K89", Color = "Preto", Year = 2020 },
+        new Veiculo { Id = 3, UserId = 2, Brand = "Volkswagen", Model = "Polo", Plate = "EFG4H56", Color = "Branco", Year = 2022 },
+        new Veiculo { Id = 4, UserId = 2, Brand = "Toyota", Model = "Corolla", Plate = "LMN0P12", Color = "Cinza", Year = 2023 }
     ];
 
-    public List<WashType> WashTypes { get; } =
+    public List<TipoLavagem> WashTypes { get; } =
     [
-        new WashType { Id = 1, Name = "Lavagem externa", BasePrice = 35m, EstimatedDurationMinutes = 30 },
-        new WashType { Id = 2, Name = "Lavagem interna", BasePrice = 40m, EstimatedDurationMinutes = 40 },
-        new WashType { Id = 3, Name = "Lavagem completa", BasePrice = 60m, EstimatedDurationMinutes = 60 }
+        new TipoLavagem { Id = 1, Name = "Lavagem externa", BasePrice = 35m, EstimatedDurationMinutes = 30 },
+        new TipoLavagem { Id = 2, Name = "Lavagem interna", BasePrice = 40m, EstimatedDurationMinutes = 40 },
+        new TipoLavagem { Id = 3, Name = "Lavagem completa", BasePrice = 60m, EstimatedDurationMinutes = 60 }
     ];
 
-    public List<Appointment> Appointments { get; } =
+    public List<Agendamento> Appointments { get; } =
     [
-        new Appointment
+        new Agendamento
         {
             Id = 1,
             UserId = 1,
@@ -46,7 +46,7 @@ public sealed class InMemoryDataStore
             Status = "Confirmado",
             TotalPrice = 72m
         },
-        new Appointment
+        new Agendamento
         {
             Id = 2,
             UserId = 1,
@@ -57,7 +57,7 @@ public sealed class InMemoryDataStore
             Status = "Aguardando",
             TotalPrice = 35m
         },
-        new Appointment
+        new Agendamento
         {
             Id = 3,
             UserId = 2,

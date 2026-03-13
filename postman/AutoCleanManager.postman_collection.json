@@ -1,45 +1,45 @@
 {
   "info": {
-    "name": "AutoClean Manager API",
+    "name": "API AutoClean Manager",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "Collection para testar o backend ASP.NET Core do AutoClean Manager."
+    "description": "Colecao para testar o backend ASP.NET Core do AutoClean Manager."
   },
   "variable": [
     { "key": "baseUrl", "value": "http://localhost:5057" },
-    { "key": "userId", "value": "1" },
-    { "key": "vehicleId", "value": "1" },
-    { "key": "washTypeId", "value": "1" },
+    { "key": "usuarioId", "value": "1" },
+    { "key": "veiculoId", "value": "1" },
+    { "key": "tipoLavagemId", "value": "1" },
     { "key": "appointmentId", "value": "1" }
   ],
   "item": [
     {
-      "name": "Users",
+      "name": "Usuarios",
       "item": [
         {
-          "name": "GET - List Users",
+          "name": "GET - Listar Usuarios",
           "request": {
             "method": "GET",
             "header": [],
-            "url": "{{baseUrl}}/api/users"
+            "url": "{{baseUrl}}/api/usuarios"
           }
         },
         {
-          "name": "GET - User By Id",
+          "name": "GET - Buscar Usuario por Id",
           "request": {
             "method": "GET",
             "header": [],
-            "url": "{{baseUrl}}/api/users/{{userId}}"
+            "url": "{{baseUrl}}/api/usuarios/{{usuarioId}}"
           }
         },
         {
-          "name": "POST - Create User",
+          "name": "POST - Criar Usuario",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
                   "const json = pm.response.json();",
-                  "if (json.id) pm.collectionVariables.set('userId', json.id);"
+                  "if (json.id) pm.collectionVariables.set('usuarioId', json.id);"
                 ],
                 "type": "text/javascript"
               }
@@ -52,13 +52,13 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Bruna Costa\",\n  \"email\": \"bruna.costa@email.com\",\n  \"role\": \"Cliente\"\n}"
+              "raw": "{\n  \"nome\": \"Bruna Costa\",\n  \"email\": \"bruna.costa@email.com\",\n  \"papel\": \"Cliente\"\n}"
             },
-            "url": "{{baseUrl}}/api/users"
+            "url": "{{baseUrl}}/api/usuarios"
           }
         },
         {
-          "name": "PUT - Update User",
+          "name": "PUT - Atualizar Usuario",
           "request": {
             "method": "PUT",
             "header": [
@@ -66,49 +66,49 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Bruna Costa Atualizada\",\n  \"email\": \"bruna.costa@email.com\",\n  \"role\": \"Cliente\"\n}"
+              "raw": "{\n  \"nome\": \"Bruna Costa Atualizada\",\n  \"email\": \"bruna.costa@email.com\",\n  \"papel\": \"Cliente\"\n}"
             },
-            "url": "{{baseUrl}}/api/users/{{userId}}"
+            "url": "{{baseUrl}}/api/usuarios/{{usuarioId}}"
           }
         },
         {
-          "name": "DELETE - User",
+          "name": "DELETE - Excluir Usuario",
           "request": {
             "method": "DELETE",
             "header": [],
-            "url": "{{baseUrl}}/api/users/{{userId}}"
+            "url": "{{baseUrl}}/api/usuarios/{{usuarioId}}"
           }
         }
       ]
     },
     {
-      "name": "Vehicles",
+      "name": "Veiculos",
       "item": [
         {
-          "name": "GET - List Vehicles",
+          "name": "GET - Listar Veiculos",
           "request": {
             "method": "GET",
             "header": [],
-            "url": "{{baseUrl}}/api/vehicles"
+            "url": "{{baseUrl}}/api/veiculos"
           }
         },
         {
-          "name": "GET - Vehicle By Id",
+          "name": "GET - Buscar Veiculo por Id",
           "request": {
             "method": "GET",
             "header": [],
-            "url": "{{baseUrl}}/api/vehicles/{{vehicleId}}"
+            "url": "{{baseUrl}}/api/veiculos/{{veiculoId}}"
           }
         },
         {
-          "name": "POST - Create Vehicle",
+          "name": "POST - Criar Veiculo",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
                   "const json = pm.response.json();",
-                  "if (json.id) pm.collectionVariables.set('vehicleId', json.id);"
+                  "if (json.id) pm.collectionVariables.set('veiculoId', json.id);"
                 ],
                 "type": "text/javascript"
               }
@@ -121,13 +121,13 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userId\": {{userId}},\n  \"brand\": \"Chevrolet\",\n  \"model\": \"Onix\",\n  \"plate\": \"QRS3T45\",\n  \"color\": \"Vermelho\",\n  \"year\": 2022\n}"
+              "raw": "{\n  \"usuarioId\": {{usuarioId}},\n  \"marca\": \"Chevrolet\",\n  \"modelo\": \"Onix\",\n  \"placa\": \"QRS3T45\",\n  \"cor\": \"Vermelho\",\n  \"ano\": 2022\n}"
             },
-            "url": "{{baseUrl}}/api/vehicles"
+            "url": "{{baseUrl}}/api/veiculos"
           }
         },
         {
-          "name": "PUT - Update Vehicle",
+          "name": "PUT - Atualizar Veiculo",
           "request": {
             "method": "PUT",
             "header": [
@@ -135,49 +135,49 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userId\": {{userId}},\n  \"brand\": \"Chevrolet\",\n  \"model\": \"Onix Plus\",\n  \"plate\": \"QRS3T45\",\n  \"color\": \"Azul\",\n  \"year\": 2023\n}"
+              "raw": "{\n  \"usuarioId\": {{usuarioId}},\n  \"marca\": \"Chevrolet\",\n  \"modelo\": \"Onix Plus\",\n  \"placa\": \"QRS3T45\",\n  \"cor\": \"Azul\",\n  \"ano\": 2023\n}"
             },
-            "url": "{{baseUrl}}/api/vehicles/{{vehicleId}}"
+            "url": "{{baseUrl}}/api/veiculos/{{veiculoId}}"
           }
         },
         {
-          "name": "DELETE - Vehicle",
+          "name": "DELETE - Excluir Veiculo",
           "request": {
             "method": "DELETE",
             "header": [],
-            "url": "{{baseUrl}}/api/vehicles/{{vehicleId}}"
+            "url": "{{baseUrl}}/api/veiculos/{{veiculoId}}"
           }
         }
       ]
     },
     {
-      "name": "Wash Types",
+      "name": "Tipos de Lavagem",
       "item": [
         {
-          "name": "GET - List Wash Types",
+          "name": "GET - Listar Tipos de Lavagem",
           "request": {
             "method": "GET",
             "header": [],
-            "url": "{{baseUrl}}/api/wash-types"
+            "url": "{{baseUrl}}/api/tipos-lavagem"
           }
         },
         {
-          "name": "GET - Wash Type By Id",
+          "name": "GET - Buscar Tipo de Lavagem por Id",
           "request": {
             "method": "GET",
             "header": [],
-            "url": "{{baseUrl}}/api/wash-types/{{washTypeId}}"
+            "url": "{{baseUrl}}/api/tipos-lavagem/{{tipoLavagemId}}"
           }
         },
         {
-          "name": "POST - Create Wash Type",
+          "name": "POST - Criar Tipo de Lavagem",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
                   "const json = pm.response.json();",
-                  "if (json.id) pm.collectionVariables.set('washTypeId', json.id);"
+                  "if (json.id) pm.collectionVariables.set('tipoLavagemId', json.id);"
                 ],
                 "type": "text/javascript"
               }
@@ -190,13 +190,13 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Lavagem premium\",\n  \"basePrice\": 95.0,\n  \"estimatedDurationMinutes\": 90\n}"
+              "raw": "{\n  \"nome\": \"Lavagem premium\",\n  \"precoBase\": 95.0,\n  \"duracaoEstimadaMinutos\": 90\n}"
             },
-            "url": "{{baseUrl}}/api/wash-types"
+            "url": "{{baseUrl}}/api/tipos-lavagem"
           }
         },
         {
-          "name": "PUT - Update Wash Type",
+          "name": "PUT - Atualizar Tipo de Lavagem",
           "request": {
             "method": "PUT",
             "header": [
@@ -204,42 +204,42 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Lavagem premium plus\",\n  \"basePrice\": 110.0,\n  \"estimatedDurationMinutes\": 100\n}"
+              "raw": "{\n  \"nome\": \"Lavagem premium plus\",\n  \"precoBase\": 110.0,\n  \"duracaoEstimadaMinutos\": 100\n}"
             },
-            "url": "{{baseUrl}}/api/wash-types/{{washTypeId}}"
+            "url": "{{baseUrl}}/api/tipos-lavagem/{{tipoLavagemId}}"
           }
         },
         {
-          "name": "DELETE - Wash Type",
+          "name": "DELETE - Excluir Tipo de Lavagem",
           "request": {
             "method": "DELETE",
             "header": [],
-            "url": "{{baseUrl}}/api/wash-types/{{washTypeId}}"
+            "url": "{{baseUrl}}/api/tipos-lavagem/{{tipoLavagemId}}"
           }
         }
       ]
     },
     {
-      "name": "Appointments",
+      "name": "Agendamentos",
       "item": [
         {
-          "name": "GET - List Appointments",
+          "name": "GET - Listar Agendamentos",
           "request": {
             "method": "GET",
             "header": [],
-            "url": "{{baseUrl}}/api/appointments"
+            "url": "{{baseUrl}}/api/agendamentos"
           }
         },
         {
-          "name": "GET - Appointment By Id",
+          "name": "GET - Buscar Agendamento por Id",
           "request": {
             "method": "GET",
             "header": [],
-            "url": "{{baseUrl}}/api/appointments/{{appointmentId}}"
+            "url": "{{baseUrl}}/api/agendamentos/{{appointmentId}}"
           }
         },
         {
-          "name": "POST - Create Appointment",
+          "name": "POST - Criar Agendamento",
           "event": [
             {
               "listen": "test",
@@ -259,13 +259,13 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userId\": {{userId}},\n  \"vehicleId\": {{vehicleId}},\n  \"washTypeId\": {{washTypeId}},\n  \"dirtLevel\": \"Pesada\",\n  \"scheduledAt\": \"2026-03-20T14:00:00Z\",\n  \"status\": \"Aguardando\"\n}"
+              "raw": "{\n  \"usuarioId\": {{usuarioId}},\n  \"veiculoId\": {{veiculoId}},\n  \"tipoLavagemId\": {{tipoLavagemId}},\n  \"nivelSujeira\": \"Pesada\",\n  \"dataHoraAgendada\": \"2026-03-20T14:00:00Z\",\n  \"status\": \"Aguardando\"\n}"
             },
-            "url": "{{baseUrl}}/api/appointments"
+            "url": "{{baseUrl}}/api/agendamentos"
           }
         },
         {
-          "name": "PUT - Update Appointment",
+          "name": "PUT - Atualizar Agendamento",
           "request": {
             "method": "PUT",
             "header": [
@@ -273,17 +273,17 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userId\": {{userId}},\n  \"vehicleId\": {{vehicleId}},\n  \"washTypeId\": {{washTypeId}},\n  \"dirtLevel\": \"Media\",\n  \"scheduledAt\": \"2026-03-20T15:00:00Z\",\n  \"status\": \"Confirmado\"\n}"
+              "raw": "{\n  \"usuarioId\": {{usuarioId}},\n  \"veiculoId\": {{veiculoId}},\n  \"tipoLavagemId\": {{tipoLavagemId}},\n  \"nivelSujeira\": \"Media\",\n  \"dataHoraAgendada\": \"2026-03-20T15:00:00Z\",\n  \"status\": \"Confirmado\"\n}"
             },
-            "url": "{{baseUrl}}/api/appointments/{{appointmentId}}"
+            "url": "{{baseUrl}}/api/agendamentos/{{appointmentId}}"
           }
         },
         {
-          "name": "DELETE - Appointment",
+          "name": "DELETE - Excluir Agendamento",
           "request": {
             "method": "DELETE",
             "header": [],
-            "url": "{{baseUrl}}/api/appointments/{{appointmentId}}"
+            "url": "{{baseUrl}}/api/agendamentos/{{appointmentId}}"
           }
         }
       ]
