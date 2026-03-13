@@ -301,6 +301,118 @@ Este projeto foi desenvolvido para estudo e demonstração de conceitos como:
 
 ---
 
+# Backend C# .NET (API REST em memória)
+
+Foi implementado um backend em ASP.NET Core Web API com dados em memória, com CRUD completo (GET, POST, PUT e DELETE) para cada controller principal do sistema.
+
+Pasta da API:
+
+- `AutocleanManager.Api`
+
+Framework alvo:
+
+- `.NET 10` (`net10.0`)
+
+## Como executar
+
+1. Instale o SDK .NET 10.
+2. No terminal, entre na pasta da API:
+
+```bash
+cd AutocleanManager.Api
+```
+
+3. Rode a aplicação:
+
+```bash
+dotnet run
+```
+
+Ou use o script de inicializacao (recomendado no Windows):
+
+```powershell
+.\scripts\run-api.ps1
+```
+
+Para escolher outra porta:
+
+```powershell
+.\scripts\run-api.ps1 -Port 5060
+```
+
+4. Acesse a documentação Swagger no navegador (ambiente Development):
+
+```text
+https://localhost:xxxx/swagger
+```
+
+## Controllers e rotas
+
+### Usuários
+
+- `GET /api/users`
+- `GET /api/users/{id}`
+- `POST /api/users`
+- `PUT /api/users/{id}`
+- `DELETE /api/users/{id}`
+
+### Veículos
+
+- `GET /api/vehicles`
+- `GET /api/vehicles/{id}`
+- `POST /api/vehicles`
+- `PUT /api/vehicles/{id}`
+- `DELETE /api/vehicles/{id}`
+
+### Tipos de Lavagem
+
+- `GET /api/wash-types`
+- `GET /api/wash-types/{id}`
+- `POST /api/wash-types`
+- `PUT /api/wash-types/{id}`
+- `DELETE /api/wash-types/{id}`
+
+### Agendamentos
+
+- `GET /api/appointments`
+- `GET /api/appointments/{id}`
+- `POST /api/appointments`
+- `PUT /api/appointments/{id}`
+- `DELETE /api/appointments/{id}`
+
+## Regras implementadas na simulacao em memoria
+
+- Calculo automatico de preco do agendamento por nivel de sujeira:
+    - `Leve`: +0%
+    - `Media`: +10%
+    - `Pesada`: +20%
+- Validacao de relacionamento entre usuario, veiculo e tipo de lavagem.
+- Bloqueio de conflito de horario para agendamentos ativos no mesmo horario.
+
+## Collection Postman
+
+Arquivo pronto para importacao no Postman:
+
+- `postman/AutoCleanManager.postman_collection.json`
+
+Inclui requests de CRUD completo para:
+
+- Users
+- Vehicles
+- Wash Types
+- Appointments
+
+A collection utiliza variaveis (`baseUrl`, `userId`, `vehicleId`, `washTypeId`, `appointmentId`) e scripts de teste para salvar IDs automaticamente apos o `POST`.
+
+Sugestao de uso:
+
+1. Execute primeiro o `POST - Create User`.
+2. Em seguida execute `POST - Create Vehicle`.
+3. Crie/atualize tipo de lavagem em `Wash Types`.
+4. Por fim execute `POST - Create Appointment`.
+
+---
+
 # Estrutura Conceitual do Sistema
 
 Entidades principais do sistema:

@@ -1,0 +1,11 @@
+namespace AutocleanManager.Api.Models.Requests;
+
+public sealed class UpdateAppointmentRequest
+{
+    public int UserId { get; set; }
+    public int VehicleId { get; set; }
+    public int WashTypeId { get; set; }
+    public string DirtLevel { get; set; } = string.Empty;
+    public DateTime ScheduledAt { get; set; }
+    public string Status { get; set; } = string.Empty;
+}

@@ -1,0 +1,292 @@
+{
+  "info": {
+    "name": "AutoClean Manager API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Collection para testar o backend ASP.NET Core do AutoClean Manager."
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5057" },
+    { "key": "userId", "value": "1" },
+    { "key": "vehicleId", "value": "1" },
+    { "key": "washTypeId", "value": "1" },
+    { "key": "appointmentId", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "GET - List Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/users"
+          }
+        },
+        {
+          "name": "GET - User By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/users/{{userId}}"
+          }
+        },
+        {
+          "name": "POST - Create User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.id) pm.collectionVariables.set('userId', json.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Bruna Costa\",\n  \"email\": \"bruna.costa@email.com\",\n  \"role\": \"Cliente\"\n}"
+            },
+            "url": "{{baseUrl}}/api/users"
+          }
+        },
+        {
+          "name": "PUT - Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Bruna Costa Atualizada\",\n  \"email\": \"bruna.costa@email.com\",\n  \"role\": \"Cliente\"\n}"
+            },
+            "url": "{{baseUrl}}/api/users/{{userId}}"
+          }
+        },
+        {
+          "name": "DELETE - User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/users/{{userId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Vehicles",
+      "item": [
+        {
+          "name": "GET - List Vehicles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/vehicles"
+          }
+        },
+        {
+          "name": "GET - Vehicle By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/vehicles/{{vehicleId}}"
+          }
+        },
+        {
+          "name": "POST - Create Vehicle",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.id) pm.collectionVariables.set('vehicleId', json.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": {{userId}},\n  \"brand\": \"Chevrolet\",\n  \"model\": \"Onix\",\n  \"plate\": \"QRS3T45\",\n  \"color\": \"Vermelho\",\n  \"year\": 2022\n}"
+            },
+            "url": "{{baseUrl}}/api/vehicles"
+          }
+        },
+        {
+          "name": "PUT - Update Vehicle",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": {{userId}},\n  \"brand\": \"Chevrolet\",\n  \"model\": \"Onix Plus\",\n  \"plate\": \"QRS3T45\",\n  \"color\": \"Azul\",\n  \"year\": 2023\n}"
+            },
+            "url": "{{baseUrl}}/api/vehicles/{{vehicleId}}"
+          }
+        },
+        {
+          "name": "DELETE - Vehicle",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/vehicles/{{vehicleId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Wash Types",
+      "item": [
+        {
+          "name": "GET - List Wash Types",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/wash-types"
+          }
+        },
+        {
+          "name": "GET - Wash Type By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/wash-types/{{washTypeId}}"
+          }
+        },
+        {
+          "name": "POST - Create Wash Type",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.id) pm.collectionVariables.set('washTypeId', json.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Lavagem premium\",\n  \"basePrice\": 95.0,\n  \"estimatedDurationMinutes\": 90\n}"
+            },
+            "url": "{{baseUrl}}/api/wash-types"
+          }
+        },
+        {
+          "name": "PUT - Update Wash Type",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Lavagem premium plus\",\n  \"basePrice\": 110.0,\n  \"estimatedDurationMinutes\": 100\n}"
+            },
+            "url": "{{baseUrl}}/api/wash-types/{{washTypeId}}"
+          }
+        },
+        {
+          "name": "DELETE - Wash Type",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/wash-types/{{washTypeId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Appointments",
+      "item": [
+        {
+          "name": "GET - List Appointments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/appointments"
+          }
+        },
+        {
+          "name": "GET - Appointment By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/appointments/{{appointmentId}}"
+          }
+        },
+        {
+          "name": "POST - Create Appointment",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.id) pm.collectionVariables.set('appointmentId', json.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": {{userId}},\n  \"vehicleId\": {{vehicleId}},\n  \"washTypeId\": {{washTypeId}},\n  \"dirtLevel\": \"Pesada\",\n  \"scheduledAt\": \"2026-03-20T14:00:00Z\",\n  \"status\": \"Aguardando\"\n}"
+            },
+            "url": "{{baseUrl}}/api/appointments"
+          }
+        },
+        {
+          "name": "PUT - Update Appointment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": {{userId}},\n  \"vehicleId\": {{vehicleId}},\n  \"washTypeId\": {{washTypeId}},\n  \"dirtLevel\": \"Media\",\n  \"scheduledAt\": \"2026-03-20T15:00:00Z\",\n  \"status\": \"Confirmado\"\n}"
+            },
+            "url": "{{baseUrl}}/api/appointments/{{appointmentId}}"
+          }
+        },
+        {
+          "name": "DELETE - Appointment",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/appointments/{{appointmentId}}"
+          }
+        }
+      ]
+    }
+  ]
+}
