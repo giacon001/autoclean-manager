@@ -2,33 +2,35 @@ using AutocleanManager.Api.Data;
 using AutocleanManager.Api.Models;
 using AutocleanManager.Api.Models.Requests;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AutocleanManager.Api.Controllers;
 
 [ApiController]
 [Route("api/veiculos")]
-public sealed class VeiculosController(ArmazenamentoEmMemoria store) : ControllerBase
+public sealed class VeiculosController(AppDbContext db) : ControllerBase
 {
     [HttpGet]
-    public ActionResult<IEnumerable<Veiculo>> GetAll()
+    public async Task<ActionResult<IEnumerable<Veiculo>>> GetAll()
     {
-        return Ok(store.Vehicles);
+        var veiculos = await db.Veiculos.ToListAsync();
+        return Ok(veiculos);
     }
 
     [HttpGet("{id:int}")]
-    public ActionResult<Veiculo> GetById(int id)
+    public async Task<ActionResult<Veiculo>> GetById(int id)
     {
-        var Veiculo = store.Vehicles.FirstOrDefault(v => v.Id == id);
-        if (Veiculo is null)
+        var veiculo = await db.Veiculos.FirstOrDefaultAsync(v => v.Id == id);
+        if (veiculo is null)
         {
             return NotFound(new { message = "Veiculo nao encontrado." });
         }
 
-        return Ok(Veiculo);
+        return Ok(veiculo);
     }
 
     [HttpPost]
-    public ActionResult<Veiculo> Create([FromBody] CriarVeiculoRequest request)
+    public async Task<ActionResult<Veiculo>> Create([FromBody] CriarVeiculoRequest request)
     {
         if (request.UsuarioId <= 0 || string.IsNullOrWhiteSpace(request.Marca) || string.IsNullOrWhiteSpace(request.Modelo) ||
             string.IsNullOrWhiteSpace(request.Placa) || string.IsNullOrWhiteSpace(request.Cor))
@@ -36,38 +38,39 @@ public sealed class VeiculosController(ArmazenamentoEmMemoria store) : Controlle
             return BadRequest(new { message = "UsuarioId, marca, modelo, placa e cor sao obrigatorios." });
         }
 
-        var userExists = store.Users.Any(u => u.Id == request.UsuarioId);
+        var userExists = await db.Usuarios.AnyAsync(u => u.Id == request.UsuarioId);
         if (!userExists)
         {
             return BadRequest(new { message = "Usuario informado nao existe." });
         }
 
-        var plateInUse = store.Vehicles.Any(v => v.Plate.Equals(request.Placa, StringComparison.OrdinalIgnoreCase));
+        var normalizedPlate = request.Placa.Trim().ToUpper();
+        var plateInUse = await db.Veiculos.AnyAsync(v => v.Placa.ToUpper() == normalizedPlate);
         if (plateInUse)
         {
             return Conflict(new { message = "Placa ja cadastrada." });
         }
 
-        var Veiculo = new Veiculo
+        var veiculo = new Veiculo
         {
-            Id = store.NextVehicleId(),
-            UserId = request.UsuarioId,
-            Brand = request.Marca.Trim(),
-            Model = request.Modelo.Trim(),
-            Plate = request.Placa.Trim().ToUpperInvariant(),
-            Color = request.Cor.Trim(),
-            Year = request.Ano
+            UsuarioId = request.UsuarioId,
+            Marca = request.Marca.Trim(),
+            Modelo = request.Modelo.Trim(),
+            Placa = request.Placa.Trim().ToUpperInvariant(),
+            Cor = request.Cor.Trim(),
+            Ano = request.Ano
         };
 
-        store.Vehicles.Add(Veiculo);
-        return CreatedAtAction(nameof(GetById), new { id = Veiculo.Id }, Veiculo);
+        db.Veiculos.Add(veiculo);
+        await db.SaveChangesAsync();
+        return CreatedAtAction(nameof(GetById), new { id = veiculo.Id }, veiculo);
     }
 
     [HttpPut("{id:int}")]
-    public ActionResult<Veiculo> Update(int id, [FromBody] AtualizarVeiculoRequest request)
+    public async Task<ActionResult<Veiculo>> Update(int id, [FromBody] AtualizarVeiculoRequest request)
     {
-        var Veiculo = store.Vehicles.FirstOrDefault(v => v.Id == id);
-        if (Veiculo is null)
+        var veiculo = await db.Veiculos.FirstOrDefaultAsync(v => v.Id == id);
+        if (veiculo is null)
         {
             return NotFound(new { message = "Veiculo nao encontrado." });
         }
@@ -78,44 +81,48 @@ public sealed class VeiculosController(ArmazenamentoEmMemoria store) : Controlle
             return BadRequest(new { message = "UsuarioId, marca, modelo, placa e cor sao obrigatorios." });
         }
 
-        var userExists = store.Users.Any(u => u.Id == request.UsuarioId);
+        var userExists = await db.Usuarios.AnyAsync(u => u.Id == request.UsuarioId);
         if (!userExists)
         {
             return BadRequest(new { message = "Usuario informado nao existe." });
         }
 
-        var plateInUse = store.Vehicles.Any(v => v.Id != id && v.Plate.Equals(request.Placa, StringComparison.OrdinalIgnoreCase));
+        var normalizedPlate = request.Placa.Trim().ToUpper();
+        var plateInUse = await db.Veiculos.AnyAsync(v => v.Id != id && v.Placa.ToUpper() == normalizedPlate);
         if (plateInUse)
         {
             return Conflict(new { message = "Placa ja cadastrada." });
         }
 
-        Veiculo.UserId = request.UsuarioId;
-        Veiculo.Brand = request.Marca.Trim();
-        Veiculo.Model = request.Modelo.Trim();
-        Veiculo.Plate = request.Placa.Trim().ToUpperInvariant();
-        Veiculo.Color = request.Cor.Trim();
-        Veiculo.Year = request.Ano;
+        veiculo.UsuarioId = request.UsuarioId;
+        veiculo.Marca = request.Marca.Trim();
+        veiculo.Modelo = request.Modelo.Trim();
+        veiculo.Placa = request.Placa.Trim().ToUpperInvariant();
+        veiculo.Cor = request.Cor.Trim();
+        veiculo.Ano = request.Ano;
 
-        return Ok(Veiculo);
+        db.Veiculos.Update(veiculo);
+        await db.SaveChangesAsync();
+        return Ok(veiculo);
     }
 
     [HttpDelete("{id:int}")]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        var Veiculo = store.Vehicles.FirstOrDefault(v => v.Id == id);
-        if (Veiculo is null)
+        var veiculo = await db.Veiculos.FirstOrDefaultAsync(v => v.Id == id);
+        if (veiculo is null)
         {
             return NotFound(new { message = "Veiculo nao encontrado." });
         }
 
-        var hasAppointments = store.Appointments.Any(a => a.VehicleId == id);
+        var hasAppointments = await db.Agendamentos.AnyAsync(a => a.VeiculoId == id);
         if (hasAppointments)
         {
             return Conflict(new { message = "Nao e possivel remover veiculo com agendamentos vinculados." });
         }
 
-        store.Vehicles.Remove(Veiculo);
+        db.Veiculos.Remove(veiculo);
+        await db.SaveChangesAsync();
         return NoContent();
     }
 }

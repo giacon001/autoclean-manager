@@ -3,7 +3,7 @@ namespace AutocleanManager.Api.Models;
 public sealed class TipoLavagem
 {
     public int Id { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public decimal BasePrice { get; set; }
-    public int EstimatedDurationMinutes { get; set; }
+    public string Nome { get; set; } = string.Empty;
+    public decimal PrecoBase { get; set; }
+    public int DuracaoEstimadaMinutos { get; set; }
 }

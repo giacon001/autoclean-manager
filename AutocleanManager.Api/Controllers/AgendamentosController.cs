@@ -2,12 +2,13 @@ using AutocleanManager.Api.Data;
 using AutocleanManager.Api.Models;
 using AutocleanManager.Api.Models.Requests;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AutocleanManager.Api.Controllers;
 
 [ApiController]
 [Route("api/agendamentos")]
-public sealed class AgendamentosController(ArmazenamentoEmMemoria store) : ControllerBase
+public sealed class AgendamentosController(AppDbContext db) : ControllerBase
 {
     private static readonly HashSet<string> AllowedDirtLevels =
     [
@@ -28,27 +29,28 @@ public sealed class AgendamentosController(ArmazenamentoEmMemoria store) : Contr
     ];
 
     [HttpGet]
-    public ActionResult<IEnumerable<Agendamento>> GetAll()
+    public async Task<ActionResult<IEnumerable<Agendamento>>> GetAll()
     {
-        return Ok(store.Appointments);
+        var agendamentos = await db.Agendamentos.ToListAsync();
+        return Ok(agendamentos);
     }
 
     [HttpGet("{id:int}")]
-    public ActionResult<Agendamento> GetById(int id)
+    public async Task<ActionResult<Agendamento>> GetById(int id)
     {
-        var Agendamento = store.Appointments.FirstOrDefault(a => a.Id == id);
-        if (Agendamento is null)
+        var agendamento = await db.Agendamentos.FirstOrDefaultAsync(a => a.Id == id);
+        if (agendamento is null)
         {
             return NotFound(new { message = "Agendamento nao encontrado." });
         }
 
-        return Ok(Agendamento);
+        return Ok(agendamento);
     }
 
     [HttpPost]
-    public ActionResult<Agendamento> Create([FromBody] CriarAgendamentoRequest request)
+    public async Task<ActionResult<Agendamento>> Create([FromBody] CriarAgendamentoRequest request)
     {
-        var validation = ValidateRequest(
+        var validation = await ValidateRequest(
             request.UsuarioId,
             request.VeiculoId,
             request.TipoLavagemId,
@@ -61,33 +63,33 @@ public sealed class AgendamentosController(ArmazenamentoEmMemoria store) : Contr
             return validation;
         }
 
-        var TipoLavagem = store.WashTypes.First(w => w.Id == request.TipoLavagemId);
-        var Agendamento = new Agendamento
+        var tipoLavagem = await db.TiposLavagem.FirstAsync(w => w.Id == request.TipoLavagemId);
+        var agendamento = new Agendamento
         {
-            Id = store.NextAppointmentId(),
-            UserId = request.UsuarioId,
-            VehicleId = request.VeiculoId,
-            WashTypeId = request.TipoLavagemId,
-            DirtLevel = request.NivelSujeira.Trim(),
-            ScheduledAt = request.DataHoraAgendada,
+            UsuarioId = request.UsuarioId,
+            VeiculoId = request.VeiculoId,
+            TipoLavagemId = request.TipoLavagemId,
+            NivelSujeira = request.NivelSujeira.Trim(),
+            DataHoraAgendada = request.DataHoraAgendada,
             Status = request.Status.Trim(),
-            TotalPrice = CalculadoraPreco.CalculateTotalPrice(TipoLavagem.BasePrice, request.NivelSujeira)
+            PrecoTotal = CalculadoraPreco.CalculateTotalPrice(tipoLavagem.PrecoBase, request.NivelSujeira)
         };
 
-        store.Appointments.Add(Agendamento);
-        return CreatedAtAction(nameof(GetById), new { id = Agendamento.Id }, Agendamento);
+        db.Agendamentos.Add(agendamento);
+        await db.SaveChangesAsync();
+        return CreatedAtAction(nameof(GetById), new { id = agendamento.Id }, agendamento);
     }
 
     [HttpPut("{id:int}")]
-    public ActionResult<Agendamento> Update(int id, [FromBody] AtualizarAgendamentoRequest request)
+    public async Task<ActionResult<Agendamento>> Update(int id, [FromBody] AtualizarAgendamentoRequest request)
     {
-        var Agendamento = store.Appointments.FirstOrDefault(a => a.Id == id);
-        if (Agendamento is null)
+        var agendamento = await db.Agendamentos.FirstOrDefaultAsync(a => a.Id == id);
+        if (agendamento is null)
         {
             return NotFound(new { message = "Agendamento nao encontrado." });
         }
 
-        var validation = ValidateRequest(
+        var validation = await ValidateRequest(
             request.UsuarioId,
             request.VeiculoId,
             request.TipoLavagemId,
@@ -100,33 +102,36 @@ public sealed class AgendamentosController(ArmazenamentoEmMemoria store) : Contr
             return validation;
         }
 
-        var TipoLavagem = store.WashTypes.First(w => w.Id == request.TipoLavagemId);
+        var tipoLavagem = await db.TiposLavagem.FirstAsync(w => w.Id == request.TipoLavagemId);
 
-        Agendamento.UserId = request.UsuarioId;
-        Agendamento.VehicleId = request.VeiculoId;
-        Agendamento.WashTypeId = request.TipoLavagemId;
-        Agendamento.DirtLevel = request.NivelSujeira.Trim();
-        Agendamento.ScheduledAt = request.DataHoraAgendada;
-        Agendamento.Status = request.Status.Trim();
-        Agendamento.TotalPrice = CalculadoraPreco.CalculateTotalPrice(TipoLavagem.BasePrice, request.NivelSujeira);
+        agendamento.UsuarioId = request.UsuarioId;
+        agendamento.VeiculoId = request.VeiculoId;
+        agendamento.TipoLavagemId = request.TipoLavagemId;
+        agendamento.NivelSujeira = request.NivelSujeira.Trim();
+        agendamento.DataHoraAgendada = request.DataHoraAgendada;
+        agendamento.Status = request.Status.Trim();
+        agendamento.PrecoTotal = CalculadoraPreco.CalculateTotalPrice(tipoLavagem.PrecoBase, request.NivelSujeira);
 
-        return Ok(Agendamento);
+        db.Agendamentos.Update(agendamento);
+        await db.SaveChangesAsync();
+        return Ok(agendamento);
     }
 
     [HttpDelete("{id:int}")]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        var Agendamento = store.Appointments.FirstOrDefault(a => a.Id == id);
-        if (Agendamento is null)
+        var agendamento = await db.Agendamentos.FirstOrDefaultAsync(a => a.Id == id);
+        if (agendamento is null)
         {
             return NotFound(new { message = "Agendamento nao encontrado." });
         }
 
-        store.Appointments.Remove(Agendamento);
+        db.Agendamentos.Remove(agendamento);
+        await db.SaveChangesAsync();
         return NoContent();
     }
 
-    private ActionResult? ValidateRequest(
+    private async Task<ActionResult?> ValidateRequest(
         int userId,
         int vehicleId,
         int washTypeId,
@@ -140,23 +145,23 @@ public sealed class AgendamentosController(ArmazenamentoEmMemoria store) : Contr
             return BadRequest(new { message = "UsuarioId, veiculoId e tipoLavagemId sao obrigatorios." });
         }
 
-        if (!store.Users.Any(u => u.Id == userId))
+        if (!await db.Usuarios.AnyAsync(u => u.Id == userId))
         {
             return BadRequest(new { message = "Usuario informado nao existe." });
         }
 
-        var Veiculo = store.Vehicles.FirstOrDefault(v => v.Id == vehicleId);
-        if (Veiculo is null)
+        var veiculo = await db.Veiculos.FirstOrDefaultAsync(v => v.Id == vehicleId);
+        if (veiculo is null)
         {
             return BadRequest(new { message = "Veiculo informado nao existe." });
         }
 
-        if (Veiculo.UserId != userId)
+        if (veiculo.UsuarioId != userId)
         {
             return BadRequest(new { message = "Veiculo nao pertence ao usuario informado." });
         }
 
-        if (!store.WashTypes.Any(w => w.Id == washTypeId))
+        if (!await db.TiposLavagem.AnyAsync(w => w.Id == washTypeId))
         {
             return BadRequest(new { message = "Tipo de lavagem informado nao existe." });
         }
@@ -176,9 +181,9 @@ public sealed class AgendamentosController(ArmazenamentoEmMemoria store) : Contr
             return BadRequest(new { message = "Data e horario do agendamento sao obrigatorios." });
         }
 
-        var alreadyBooked = store.Appointments.Any(a =>
+        var alreadyBooked = await db.Agendamentos.AnyAsync(a =>
             a.Id != currentAppointmentId &&
-            a.ScheduledAt == scheduledAt &&
+            a.DataHoraAgendada == scheduledAt &&
             a.Status != "Cancelado");
         if (alreadyBooked)
         {
