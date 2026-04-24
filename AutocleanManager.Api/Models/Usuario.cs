@@ -3,7 +3,7 @@ namespace AutocleanManager.Api.Models;
 public sealed class Usuario
 {
     public int Id { get; set; }
-    public string Name { get; set; } = string.Empty;
+    public string Nome { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
-    public string Role { get; set; } = "Cliente";
+    public string Papel { get; set; } = "Cliente";
 }

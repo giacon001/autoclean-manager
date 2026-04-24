@@ -2,62 +2,65 @@ using AutocleanManager.Api.Data;
 using AutocleanManager.Api.Models;
 using AutocleanManager.Api.Models.Requests;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AutocleanManager.Api.Controllers;
 
 [ApiController]
 [Route("api/tipos-lavagem")]
-public sealed class TiposLavagemController(ArmazenamentoEmMemoria store) : ControllerBase
+public sealed class TiposLavagemController(AppDbContext db) : ControllerBase
 {
     [HttpGet]
-    public ActionResult<IEnumerable<TipoLavagem>> GetAll()
+    public async Task<ActionResult<IEnumerable<TipoLavagem>>> GetAll()
     {
-        return Ok(store.WashTypes);
+        var tipos = await db.TiposLavagem.ToListAsync();
+        return Ok(tipos);
     }
 
     [HttpGet("{id:int}")]
-    public ActionResult<TipoLavagem> GetById(int id)
+    public async Task<ActionResult<TipoLavagem>> GetById(int id)
     {
-        var TipoLavagem = store.WashTypes.FirstOrDefault(w => w.Id == id);
-        if (TipoLavagem is null)
+        var tipoLavagem = await db.TiposLavagem.FirstOrDefaultAsync(w => w.Id == id);
+        if (tipoLavagem is null)
         {
             return NotFound(new { message = "Tipo de lavagem nao encontrado." });
         }
 
-        return Ok(TipoLavagem);
+        return Ok(tipoLavagem);
     }
 
     [HttpPost]
-    public ActionResult<TipoLavagem> Create([FromBody] CriarTipoLavagemRequest request)
+    public async Task<ActionResult<TipoLavagem>> Create([FromBody] CriarTipoLavagemRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.Nome) || request.PrecoBase <= 0 || request.DuracaoEstimadaMinutos <= 0)
         {
             return BadRequest(new { message = "Nome, preco base e duracao estimada em minutos sao obrigatorios e devem ser maiores que zero." });
         }
 
-        var nameInUse = store.WashTypes.Any(w => w.Name.Equals(request.Nome, StringComparison.OrdinalIgnoreCase));
+        var normalizedName = request.Nome.Trim().ToLower();
+        var nameInUse = await db.TiposLavagem.AnyAsync(w => w.Nome.ToLower() == normalizedName);
         if (nameInUse)
         {
             return Conflict(new { message = "Tipo de lavagem ja cadastrado." });
         }
 
-        var TipoLavagem = new TipoLavagem
+        var tipoLavagem = new TipoLavagem
         {
-            Id = store.NextWashTypeId(),
-            Name = request.Nome.Trim(),
-            BasePrice = request.PrecoBase,
-            EstimatedDurationMinutes = request.DuracaoEstimadaMinutos
+            Nome = request.Nome.Trim(),
+            PrecoBase = request.PrecoBase,
+            DuracaoEstimadaMinutos = request.DuracaoEstimadaMinutos
         };
 
-        store.WashTypes.Add(TipoLavagem);
-        return CreatedAtAction(nameof(GetById), new { id = TipoLavagem.Id }, TipoLavagem);
+        db.TiposLavagem.Add(tipoLavagem);
+        await db.SaveChangesAsync();
+        return CreatedAtAction(nameof(GetById), new { id = tipoLavagem.Id }, tipoLavagem);
     }
 
     [HttpPut("{id:int}")]
-    public ActionResult<TipoLavagem> Update(int id, [FromBody] AtualizarTipoLavagemRequest request)
+    public async Task<ActionResult<TipoLavagem>> Update(int id, [FromBody] AtualizarTipoLavagemRequest request)
     {
-        var TipoLavagem = store.WashTypes.FirstOrDefault(w => w.Id == id);
-        if (TipoLavagem is null)
+        var tipoLavagem = await db.TiposLavagem.FirstOrDefaultAsync(w => w.Id == id);
+        if (tipoLavagem is null)
         {
             return NotFound(new { message = "Tipo de lavagem nao encontrado." });
         }
@@ -67,40 +70,46 @@ public sealed class TiposLavagemController(ArmazenamentoEmMemoria store) : Contr
             return BadRequest(new { message = "Nome, preco base e duracao estimada em minutos sao obrigatorios e devem ser maiores que zero." });
         }
 
-        var nameInUse = store.WashTypes.Any(w => w.Id != id && w.Name.Equals(request.Nome, StringComparison.OrdinalIgnoreCase));
+        var normalizedName = request.Nome.Trim().ToLower();
+        var nameInUse = await db.TiposLavagem.AnyAsync(w => w.Id != id && w.Nome.ToLower() == normalizedName);
         if (nameInUse)
         {
             return Conflict(new { message = "Tipo de lavagem ja cadastrado." });
         }
 
-        TipoLavagem.Name = request.Nome.Trim();
-        TipoLavagem.BasePrice = request.PrecoBase;
-        TipoLavagem.EstimatedDurationMinutes = request.DuracaoEstimadaMinutos;
+        tipoLavagem.Nome = request.Nome.Trim();
+        tipoLavagem.PrecoBase = request.PrecoBase;
+        tipoLavagem.DuracaoEstimadaMinutos = request.DuracaoEstimadaMinutos;
 
-        foreach (var Agendamento in store.Appointments.Where(a => a.WashTypeId == id))
+        var agendamentos = await db.Agendamentos.Where(a => a.TipoLavagemId == id).ToListAsync();
+        foreach (var agendamento in agendamentos)
         {
-            Agendamento.TotalPrice = CalculadoraPreco.CalculateTotalPrice(TipoLavagem.BasePrice, Agendamento.DirtLevel);
+            agendamento.PrecoTotal = CalculadoraPreco.CalculateTotalPrice(tipoLavagem.PrecoBase, agendamento.NivelSujeira);
         }
 
-        return Ok(TipoLavagem);
+        db.TiposLavagem.Update(tipoLavagem);
+        db.Agendamentos.UpdateRange(agendamentos);
+        await db.SaveChangesAsync();
+        return Ok(tipoLavagem);
     }
 
     [HttpDelete("{id:int}")]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        var TipoLavagem = store.WashTypes.FirstOrDefault(w => w.Id == id);
-        if (TipoLavagem is null)
+        var tipoLavagem = await db.TiposLavagem.FirstOrDefaultAsync(w => w.Id == id);
+        if (tipoLavagem is null)
         {
             return NotFound(new { message = "Tipo de lavagem nao encontrado." });
         }
 
-        var hasAppointments = store.Appointments.Any(a => a.WashTypeId == id);
+        var hasAppointments = await db.Agendamentos.AnyAsync(a => a.TipoLavagemId == id);
         if (hasAppointments)
         {
             return Conflict(new { message = "Nao e possivel remover tipo de lavagem com agendamentos vinculados." });
         }
 
-        store.WashTypes.Remove(TipoLavagem);
+        db.TiposLavagem.Remove(tipoLavagem);
+        await db.SaveChangesAsync();
         return NoContent();
     }
 }

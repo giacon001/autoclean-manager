@@ -2,62 +2,65 @@ using AutocleanManager.Api.Data;
 using AutocleanManager.Api.Models;
 using AutocleanManager.Api.Models.Requests;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AutocleanManager.Api.Controllers;
 
 [ApiController]
 [Route("api/usuarios")]
-public sealed class UsuariosController(ArmazenamentoEmMemoria store) : ControllerBase
+public sealed class UsuariosController(AppDbContext db) : ControllerBase
 {
     [HttpGet]
-    public ActionResult<IEnumerable<Usuario>> GetAll()
+    public async Task<ActionResult<IEnumerable<Usuario>>> GetAll()
     {
-        return Ok(store.Users);
+        var usuarios = await db.Usuarios.ToListAsync();
+        return Ok(usuarios);
     }
 
     [HttpGet("{id:int}")]
-    public ActionResult<Usuario> GetById(int id)
+    public async Task<ActionResult<Usuario>> GetById(int id)
     {
-        var Usuario = store.Users.FirstOrDefault(u => u.Id == id);
-        if (Usuario is null)
+        var usuario = await db.Usuarios.FirstOrDefaultAsync(u => u.Id == id);
+        if (usuario is null)
         {
             return NotFound(new { message = "Usuario nao encontrado." });
         }
 
-        return Ok(Usuario);
+        return Ok(usuario);
     }
 
     [HttpPost]
-    public ActionResult<Usuario> Create([FromBody] CriarUsuarioRequest request)
+    public async Task<ActionResult<Usuario>> Create([FromBody] CriarUsuarioRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.Nome) || string.IsNullOrWhiteSpace(request.Email))
         {
             return BadRequest(new { message = "Nome e email sao obrigatorios." });
         }
 
-        var emailInUse = store.Users.Any(u => u.Email.Equals(request.Email, StringComparison.OrdinalIgnoreCase));
+        var normalizedEmail = request.Email.Trim().ToLower();
+        var emailInUse = await db.Usuarios.AnyAsync(u => u.Email.ToLower() == normalizedEmail);
         if (emailInUse)
         {
             return Conflict(new { message = "Email ja cadastrado." });
         }
 
-        var Usuario = new Usuario
+        var usuario = new Usuario
         {
-            Id = store.NextUserId(),
-            Name = request.Nome.Trim(),
+            Nome = request.Nome.Trim(),
             Email = request.Email.Trim(),
-            Role = string.IsNullOrWhiteSpace(request.Papel) ? "Cliente" : request.Papel.Trim()
+            Papel = string.IsNullOrWhiteSpace(request.Papel) ? "Cliente" : request.Papel.Trim()
         };
 
-        store.Users.Add(Usuario);
-        return CreatedAtAction(nameof(GetById), new { id = Usuario.Id }, Usuario);
+        db.Usuarios.Add(usuario);
+        await db.SaveChangesAsync();
+        return CreatedAtAction(nameof(GetById), new { id = usuario.Id }, usuario);
     }
 
     [HttpPut("{id:int}")]
-    public ActionResult<Usuario> Update(int id, [FromBody] AtualizarUsuarioRequest request)
+    public async Task<ActionResult<Usuario>> Update(int id, [FromBody] AtualizarUsuarioRequest request)
     {
-        var Usuario = store.Users.FirstOrDefault(u => u.Id == id);
-        if (Usuario is null)
+        var usuario = await db.Usuarios.FirstOrDefaultAsync(u => u.Id == id);
+        if (usuario is null)
         {
             return NotFound(new { message = "Usuario nao encontrado." });
         }
@@ -67,39 +70,43 @@ public sealed class UsuariosController(ArmazenamentoEmMemoria store) : Controlle
             return BadRequest(new { message = "Nome e email sao obrigatorios." });
         }
 
-        var emailInUse = store.Users.Any(u => u.Id != id && u.Email.Equals(request.Email, StringComparison.OrdinalIgnoreCase));
+        var normalizedEmail = request.Email.Trim().ToLower();
+        var emailInUse = await db.Usuarios.AnyAsync(u => u.Id != id && u.Email.ToLower() == normalizedEmail);
         if (emailInUse)
         {
             return Conflict(new { message = "Email ja cadastrado." });
         }
 
-        Usuario.Name = request.Nome.Trim();
-        Usuario.Email = request.Email.Trim();
+        usuario.Nome = request.Nome.Trim();
+        usuario.Email = request.Email.Trim();
         if (!string.IsNullOrWhiteSpace(request.Papel))
         {
-            Usuario.Role = request.Papel.Trim();
+            usuario.Papel = request.Papel.Trim();
         }
 
-        return Ok(Usuario);
+        db.Usuarios.Update(usuario);
+        await db.SaveChangesAsync();
+        return Ok(usuario);
     }
 
     [HttpDelete("{id:int}")]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        var Usuario = store.Users.FirstOrDefault(u => u.Id == id);
-        if (Usuario is null)
+        var usuario = await db.Usuarios.FirstOrDefaultAsync(u => u.Id == id);
+        if (usuario is null)
         {
             return NotFound(new { message = "Usuario nao encontrado." });
         }
 
-        var hasVehicles = store.Vehicles.Any(v => v.UserId == id);
-        var hasAppointments = store.Appointments.Any(a => a.UserId == id);
+        var hasVehicles = await db.Veiculos.AnyAsync(v => v.UsuarioId == id);
+        var hasAppointments = await db.Agendamentos.AnyAsync(a => a.UsuarioId == id);
         if (hasVehicles || hasAppointments)
         {
             return Conflict(new { message = "Nao e possivel remover usuario com veiculos ou agendamentos vinculados." });
         }
 
-        store.Users.Remove(Usuario);
+        db.Usuarios.Remove(usuario);
+        await db.SaveChangesAsync();
         return NoContent();
     }
 }

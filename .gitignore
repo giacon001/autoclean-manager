@@ -41,6 +41,53 @@ Thumbs.db
 *.sqlite
 *.sqlite3
 *.db
-# .NET build artifacts
-AutocleanManager.Api/bin/
-AutocleanManager.Api/obj/
+
+# =========================
+# .NET / ASP.NET Core
+# =========================
+bin/
+obj/
+[Bb]in/
+[Oo]bj/
+
+# User-specific files
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio / Rider
+.vs/
+*.VC.db
+*.VC.VC.opendb
+_ReSharper*/
+*.DotSettings.user
+
+# Test / coverage artifacts
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+# NuGet
+*.nupkg
+*.snupkg
+*.nuspec
+packages/
+
+# ASP.NET Core secrets and local configs
+appsettings.Development.json
+appsettings.Local.json
+AutocleanManager.Api/appsettings.Development.json
+AutocleanManager.Api/appsettings.Local.json
+secrets.json
+
+# EF Core temporary design-time files
+*.dbmdl
+
+# Generated static web assets
+*.staticwebassets.endpoints.json
+
+# Logs (dotnet)
+*.svclog
