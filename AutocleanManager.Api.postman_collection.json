@@ -1,0 +1,348 @@
+{
+  "info": {
+    "_postman_id": "2b0c7fc5-37b8-4d1f-a3ae-6c9f3f8db6e4",
+    "name": "AutoClean Manager API",
+    "description": "Coleção das rotas da API AutoClean Manager. Importa diretamente no Postman e no Insomnia.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    }
+  ],
+  "item": [
+    {
+      "name": "Usuarios",
+      "item": [
+        {
+          "name": "Listar usuarios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios"]
+            }
+          }
+        },
+        {
+          "name": "Buscar usuario por id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "1"]
+            }
+          }
+        },
+        {
+          "name": "Criar usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Maria Souza\",\n  \"email\": \"maria.souza@email.com\",\n  \"papel\": \"Cliente\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios"]
+            }
+          }
+        },
+        {
+          "name": "Atualizar usuario",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Maria Souza Atualizada\",\n  \"email\": \"maria.atualizada@email.com\",\n  \"papel\": \"Cliente\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "1"]
+            }
+          }
+        },
+        {
+          "name": "Excluir usuario",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Veiculos",
+      "item": [
+        {
+          "name": "Listar veiculos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/veiculos",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "veiculos"]
+            }
+          }
+        },
+        {
+          "name": "Buscar veiculo por id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/veiculos/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "veiculos", "1"]
+            }
+          }
+        },
+        {
+          "name": "Criar veiculo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuarioId\": 1,\n  \"marca\": \"Chevrolet\",\n  \"modelo\": \"Onix\",\n  \"placa\": \"XYZ1A23\",\n  \"cor\": \"Azul\",\n  \"ano\": 2024\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/veiculos",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "veiculos"]
+            }
+          }
+        },
+        {
+          "name": "Atualizar veiculo",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuarioId\": 1,\n  \"marca\": \"Chevrolet\",\n  \"modelo\": \"Onix Plus\",\n  \"placa\": \"XYZ1A23\",\n  \"cor\": \"Azul\",\n  \"ano\": 2025\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/veiculos/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "veiculos", "1"]
+            }
+          }
+        },
+        {
+          "name": "Excluir veiculo",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/veiculos/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "veiculos", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tipos de Lavagem",
+      "item": [
+        {
+          "name": "Listar tipos de lavagem",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tipos-lavagem",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tipos-lavagem"]
+            }
+          }
+        },
+        {
+          "name": "Buscar tipo de lavagem por id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tipos-lavagem/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tipos-lavagem", "1"]
+            }
+          }
+        },
+        {
+          "name": "Criar tipo de lavagem",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Lavagem premium\",\n  \"precoBase\": 80.0,\n  \"duracaoEstimadaMinutos\": 75\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tipos-lavagem",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tipos-lavagem"]
+            }
+          }
+        },
+        {
+          "name": "Atualizar tipo de lavagem",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Lavagem premium\",\n  \"precoBase\": 85.0,\n  \"duracaoEstimadaMinutos\": 80\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tipos-lavagem/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tipos-lavagem", "1"]
+            }
+          }
+        },
+        {
+          "name": "Excluir tipo de lavagem",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tipos-lavagem/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tipos-lavagem", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Agendamentos",
+      "item": [
+        {
+          "name": "Listar agendamentos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/agendamentos",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "agendamentos"]
+            }
+          }
+        },
+        {
+          "name": "Buscar agendamento por id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/agendamentos/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "agendamentos", "1"]
+            }
+          }
+        },
+        {
+          "name": "Criar agendamento",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuarioId\": 1,\n  \"veiculoId\": 1,\n  \"tipoLavagemId\": 3,\n  \"nivelSujeira\": \"Leve\",\n  \"dataHoraAgendada\": \"2026-06-10T14:00:00Z\",\n  \"status\": \"Aguardando\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/agendamentos",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "agendamentos"]
+            }
+          }
+        },
+        {
+          "name": "Atualizar agendamento",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuarioId\": 1,\n  \"veiculoId\": 1,\n  \"tipoLavagemId\": 3,\n  \"nivelSujeira\": \"Pesada\",\n  \"dataHoraAgendada\": \"2026-06-10T15:00:00Z\",\n  \"status\": \"Confirmado\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/agendamentos/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "agendamentos", "1"]
+            }
+          }
+        },
+        {
+          "name": "Excluir agendamento",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/agendamentos/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "agendamentos", "1"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

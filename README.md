@@ -1,12 +1,61 @@
 # AutoClean Manager
 
-AutoClean Manager é um sistema completo para gerenciamento de lava-jatos. A plataforma permite que clientes cadastrem seus veículos, agendem lavagens e acompanhem o status do serviço em tempo real, enquanto a equipe administrativa gerencia a agenda, controla o fluxo de atendimento e monitora métricas operacionais.
+AutoClean Manager — API
 
-O objetivo do projeto é demonstrar a construção de um sistema realista de gerenciamento de serviços, incluindo autenticação de usuários, modelagem de banco de dados, controle de agenda, gestão operacional e painel administrativo.
+API para gerenciamento de agendamentos e veículos de um lava-jatos.
+
+**Rápido: rodar com Docker**
+
+Pré-requisitos:
+- Docker (ou Docker Desktop) com suporte a Compose
+
+Na raiz do repositório execute:
+
+```bash
+docker compose up --build -d
+```
+
+Ver logs da API:
+
+```bash
+docker compose logs -f api
+```
+
+Testar um endpoint (ex.: listar usuários):
+
+```bash
+curl http://localhost:8080/api/usuarios
+```
+
+Swagger (UI):
+
+```
+http://localhost:8080/swagger
+```
+
+Parar e remover containers/volumes:
+
+```bash
+docker compose down -v
+```
+
+**Coleção de endpoints**
+
+Arquivo para importação no Postman ou Insomnia:
+
+```
+AutocleanManager.Api.postman_collection.json
+```
+
+Importe pelo menu `Import` no Postman ou `Workspace -> Import` no Insomnia.
+
+**Notas rápidas**
+- O `docker-compose.yml` cria um serviço `postgres` com usuário `postgres` / senha `postgres` e banco `autoclean_manager`.
+- A aplicação aplica migrations automaticamente na inicialização.
+- Se precisar alterar a connection string, atualize a variável `ConnectionStrings__DefaultConnection` no `docker-compose.yml` ou `AutocleanManager.Api/appsettings.json`.
 
 ---
 
-# Principais Funcionalidades
 
 ## 1. Gestão de Usuários
 
