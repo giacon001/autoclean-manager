@@ -1,93 +1,52 @@
-# Dependências
-node_modules/
-
-# Variáveis de ambiente / segredos
-.env
-.env.*
-!.env.example
-
-# Logs
-logs/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# Testes e cobertura
-coverage/
-.nyc_output/
-
-# Build / distribuição
-dist/
-build/
-
-# Cache e temporários
-.tmp/
-temp/
-.cache/
-*.tmp
-
-# Sistema operacional
-.DS_Store
-Thumbs.db
-
-# IDE/editor
-.vscode/*
-!.vscode/extensions.json
-.idea/
-
-# Arquivos locais de banco (se usar SQLite depois)
-*.sqlite
-*.sqlite3
-*.db
-
-# =========================
-# .NET / ASP.NET Core
-# =========================
+# Build do .NET
 bin/
 obj/
 [Bb]in/
 [Oo]bj/
 
-# User-specific files
+# Arquivos de usuário / IDE
+.vs/
+.vscode/*
+!.vscode/extensions.json
+.idea/
+_ReSharper*/
 *.user
-*.rsuser
 *.suo
 *.userosscache
 *.sln.docstates
-
-# Visual Studio / Rider
-.vs/
-*.VC.db
-*.VC.VC.opendb
-_ReSharper*/
 *.DotSettings.user
 
-# Test / coverage artifacts
-TestResults/
-*.trx
-*.coverage
-*.coveragexml
-
-# NuGet
-*.nupkg
-*.snupkg
-*.nuspec
-packages/
-
-# ASP.NET Core secrets and local configs
+# Configs locais e segredos
 appsettings.Development.json
 appsettings.Local.json
 AutocleanManager.Api/appsettings.Development.json
 AutocleanManager.Api/appsettings.Local.json
 secrets.json
+.env
+.env.*
+!.env.example
 
-# EF Core temporary design-time files
-*.dbmdl
+# NuGet
+*.nupkg
+*.snupkg
+packages/
 
-# Generated static web assets
-*.staticwebassets.endpoints.json
+# Testes e cobertura
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
 
-# Logs (dotnet)
-*.svclog
+# Banco local (caso use SQLite em testes)
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs e temporários
+*.log
+*.tmp
+.cache/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db

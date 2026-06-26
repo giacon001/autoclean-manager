@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoClean Manager</title>
+    <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+    <div class="layout">
+        <aside class="menu-lateral">
+            <div class="marca">
+                <span class="marca-icone">AC</span>
+                <div>
+                    <strong>AutoClean</strong>
+                    <small>Manager</small>
+                </div>
+            </div>
+
+            <nav>
+                <button class="link-menu ativo" data-secao="painel">Painel</button>
+                <button class="link-menu" data-secao="agendamentos">Agendamentos</button>
+                <button class="link-menu" data-secao="veiculos">Veículos</button>
+                <button class="link-menu" data-secao="usuarios">Usuários</button>
+                <button class="link-menu" data-secao="tipos">Tipos de Lavagem</button>
+            </nav>
+
+            <p class="rodape-menu">Lava-jato &middot; uso interno</p>
+        </aside>
+
+        <main class="conteudo">
+            <!-- Painel / Dashboard -->
+            <section id="painel" class="secao ativa">
+                <header class="titulo-secao">
+                    <h1>Painel</h1>
+                    <p>Resumo do dia e dos cadastros.</p>
+                </header>
+
+                <div class="cartoes-resumo" id="cartoes-resumo"></div>
+
+                <div class="bloco">
+                    <h2>Agenda de hoje</h2>
+                    <div class="tabela-rolagem">
+                        <table id="tabela-agenda-hoje">
+                            <thead>
+                                <tr>
+                                    <th>Horário</th>
+                                    <th>Cliente</th>
+                                    <th>Veículo</th>
+                                    <th>Lavagem</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Agendamentos -->
+            <section id="agendamentos" class="secao">
+                <header class="titulo-secao">
+                    <h1>Agendamentos</h1>
+                    <p>Marque uma lavagem e acompanhe o andamento.</p>
+                </header>
+
+                <div class="grade-form-lista">
+                    <form class="cartao formulario" id="form-agendamento">
+                        <input type="hidden" name="id">
+                        <h2 class="titulo-form">Novo agendamento</h2>
+
+                        <label>Cliente
+                            <select name="usuarioId" required></select>
+                        </label>
+
+                        <label>Veículo
+                            <select name="veiculoId" required></select>
+                        </label>
+
+                        <label>Tipo de lavagem
+                            <select name="tipoLavagemId" required></select>
+                        </label>
+
+                        <label>Nível de sujeira
+                            <select name="nivelSujeira">
+                                <option value="Leve">Leve (sem acréscimo)</option>
+                                <option value="Media">Média (+10%)</option>
+                                <option value="Pesada">Pesada (+20%)</option>
+                            </select>
+                        </label>
+
+                        <label>Data e horário
+                            <input type="datetime-local" name="dataHora" required>
+                        </label>
+
+                        <label>Status
+                            <select name="status">
+                                <option>Aguardando</option>
+                                <option>Confirmado</option>
+                                <option>Na fila</option>
+                                <option>Lavando</option>
+                                <option>Pronto para retirada</option>
+                                <option>Finalizado</option>
+                                <option>Cancelado</option>
+                            </select>
+                        </label>
+
+                        <div class="previa-preco">
+                            Valor estimado: <strong id="previa-preco">R$ 0,00</strong>
+                        </div>
+
+                        <div class="acoes-form">
+                            <button type="submit" class="botao">Salvar</button>
+                            <button type="button" class="botao secundario" data-limpar="form-agendamento">Limpar</button>
+                        </div>
+                    </form>
+
+                    <div class="cartao">
+                        <div class="tabela-rolagem">
+                            <table id="tabela-agendamentos">
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Cliente</th>
+                                        <th>Veículo</th>
+                                        <th>Lavagem</th>
+                                        <th>Sujeira</th>
+                                        <th>Valor</th>
+                                        <th>Status</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Veículos -->
+            <section id="veiculos" class="secao">
+                <header class="titulo-secao">
+                    <h1>Veículos</h1>
+                    <p>Garagem dos clientes.</p>
+                </header>
+
+                <div class="grade-form-lista">
+                    <form class="cartao formulario" id="form-veiculo">
+                        <input type="hidden" name="id">
+                        <h2 class="titulo-form">Novo veículo</h2>
+
+                        <label>Dono
+                            <select name="usuarioId" required></select>
+                        </label>
+                        <label>Marca
+                            <input type="text" name="marca" required placeholder="Fiat">
+                        </label>
+                        <label>Modelo
+                            <input type="text" name="modelo" required placeholder="Argo">
+                        </label>
+                        <label>Placa
+                            <input type="text" name="placa" required placeholder="ABC1D23" maxlength="8">
+                        </label>
+                        <label>Cor
+                            <input type="text" name="cor" required placeholder="Prata">
+                        </label>
+                        <label>Ano (opcional)
+                            <input type="number" name="ano" min="1950" max="2100" placeholder="2021">
+                        </label>
+
+                        <div class="acoes-form">
+                            <button type="submit" class="botao">Salvar</button>
+                            <button type="button" class="botao secundario" data-limpar="form-veiculo">Limpar</button>
+                        </div>
+                    </form>
+
+                    <div class="cartao">
+                        <div class="tabela-rolagem">
+                            <table id="tabela-veiculos">
+                                <thead>
+                                    <tr>
+                                        <th>Placa</th>
+                                        <th>Marca / Modelo</th>
+                                        <th>Cor</th>
+                                        <th>Ano</th>
+                                        <th>Dono</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Usuários -->
+            <section id="usuarios" class="secao">
+                <header class="titulo-secao">
+                    <h1>Usuários</h1>
+                    <p>Clientes e equipe.</p>
+                </header>
+
+                <div class="grade-form-lista">
+                    <form class="cartao formulario" id="form-usuario">
+                        <input type="hidden" name="id">
+                        <h2 class="titulo-form">Novo usuário</h2>
+
+                        <label>Nome
+                            <input type="text" name="nome" required placeholder="João Silva">
+                        </label>
+                        <label>E-mail
+                            <input type="email" name="email" required placeholder="joao@email.com">
+                        </label>
+                        <label>Papel
+                            <select name="papel">
+                                <option>Cliente</option>
+                                <option>Funcionario</option>
+                                <option>Administrador</option>
+                            </select>
+                        </label>
+
+                        <div class="acoes-form">
+                            <button type="submit" class="botao">Salvar</button>
+                            <button type="button" class="botao secundario" data-limpar="form-usuario">Limpar</button>
+                        </div>
+                    </form>
+
+                    <div class="cartao">
+                        <div class="tabela-rolagem">
+                            <table id="tabela-usuarios">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>E-mail</th>
+                                        <th>Papel</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tipos de Lavagem -->
+            <section id="tipos" class="secao">
+                <header class="titulo-secao">
+                    <h1>Tipos de Lavagem</h1>
+                    <p>Serviços oferecidos e preços base.</p>
+                </header>
+
+                <div class="grade-form-lista">
+                    <form class="cartao formulario" id="form-tipo">
+                        <input type="hidden" name="id">
+                        <h2 class="titulo-form">Novo tipo</h2>
+
+                        <label>Nome
+                            <input type="text" name="nome" required placeholder="Lavagem completa">
+                        </label>
+                        <label>Preço base (R$)
+                            <input type="number" name="precoBase" required min="0" step="0.01" placeholder="60">
+                        </label>
+                        <label>Duração estimada (minutos)
+                            <input type="number" name="duracao" required min="1" placeholder="60">
+                        </label>
+
+                        <div class="acoes-form">
+                            <button type="submit" class="botao">Salvar</button>
+                            <button type="button" class="botao secundario" data-limpar="form-tipo">Limpar</button>
+                        </div>
+                    </form>
+
+                    <div class="cartao">
+                        <div class="tabela-rolagem">
+                            <table id="tabela-tipos">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Preço base</th>
+                                        <th>Duração</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="aviso" class="aviso"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
