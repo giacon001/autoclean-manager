@@ -1,0 +1,22 @@
+# Blueprint do Render: cria o banco PostgreSQL e o servico web (Docker) juntos.
+# No Render: New + -> Blueprint -> selecionar este repositorio.
+databases:
+  - name: autoclean-db
+    databaseName: autoclean_manager
+    user: autoclean
+    plan: free
+
+services:
+  - type: web
+    name: autoclean-manager
+    runtime: docker
+    plan: free
+    dockerfilePath: AutocleanManager.Api/Dockerfile
+    dockerContext: .
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: autoclean-db
+          property: connectionString
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production

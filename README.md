@@ -172,6 +172,31 @@ docker-compose.yml  banco + API
 
 ---
 
+## Deploy (Render)
+
+O projeto sobe no [Render](https://render.com) com banco PostgreSQL grátis,
+gerando um link público para compartilhar. O arquivo `render.yaml` já descreve
+tudo (serviço web + banco).
+
+Passo a passo:
+
+1. Faça o push do projeto para o GitHub (já está lá).
+2. Crie uma conta gratuita no Render e conecte sua conta do GitHub.
+3. No painel: **New +** → **Blueprint** → selecione este repositório.
+4. O Render lê o `render.yaml`, cria o banco e o serviço web e faz o build do
+   Docker. Clique em **Apply** e aguarde o primeiro deploy.
+5. Ao terminar, o serviço fica em um endereço como
+   `https://autoclean-manager.onrender.com` — esse é o link do professor.
+
+Observações:
+
+- No plano gratuito o serviço "dorme" após um tempo sem acesso, então a primeira
+  abertura depois de ocioso pode levar de 30 a 60 segundos. Depois fica normal.
+- O banco gratuito do Render expira após cerca de 30 dias.
+- Como o banco começa vazio, lembre que o **primeiro cadastro vira Administrador**.
+
+---
+
 ## Tecnologias
 
 - ASP.NET Core Web API (.NET 10)
