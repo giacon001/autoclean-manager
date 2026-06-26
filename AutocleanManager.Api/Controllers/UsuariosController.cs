@@ -29,12 +29,31 @@ public sealed class UsuariosController(AppDbContext db) : ControllerBase
         return Ok(usuario);
     }
 
+    [HttpPost("login")]
+    public async Task<ActionResult<Usuario>> Login([FromBody] LoginRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Senha))
+        {
+            return BadRequest(new { message = "Email e senha sao obrigatorios." });
+        }
+
+        var normalizedEmail = request.Email.Trim().ToLower();
+        var usuario = await db.Usuarios.FirstOrDefaultAsync(u => u.Email.ToLower() == normalizedEmail);
+        if (usuario is null || usuario.Senha != request.Senha)
+        {
+            return Unauthorized(new { message = "Email ou senha invalidos." });
+        }
+
+        return Ok(usuario);
+    }
+
     [HttpPost]
     public async Task<ActionResult<Usuario>> Create([FromBody] CriarUsuarioRequest request)
     {
-        if (string.IsNullOrWhiteSpace(request.Nome) || string.IsNullOrWhiteSpace(request.Email))
+        if (string.IsNullOrWhiteSpace(request.Nome) || string.IsNullOrWhiteSpace(request.Email) ||
+            string.IsNullOrWhiteSpace(request.Senha))
         {
-            return BadRequest(new { message = "Nome e email sao obrigatorios." });
+            return BadRequest(new { message = "Nome, email e senha sao obrigatorios." });
         }
 
         var normalizedEmail = request.Email.Trim().ToLower();
@@ -44,11 +63,18 @@ public sealed class UsuariosController(AppDbContext db) : ControllerBase
             return Conflict(new { message = "Email ja cadastrado." });
         }
 
+        // O primeiro usuario cadastrado vira Administrador para destravar o sistema.
+        var primeiroUsuario = !await db.Usuarios.AnyAsync();
+        var papel = primeiroUsuario
+            ? "Administrador"
+            : (string.IsNullOrWhiteSpace(request.Papel) ? "Cliente" : request.Papel.Trim());
+
         var usuario = new Usuario
         {
             Nome = request.Nome.Trim(),
             Email = request.Email.Trim(),
-            Papel = string.IsNullOrWhiteSpace(request.Papel) ? "Cliente" : request.Papel.Trim()
+            Senha = request.Senha,
+            Papel = papel
         };
 
         db.Usuarios.Add(usuario);
@@ -82,6 +108,10 @@ public sealed class UsuariosController(AppDbContext db) : ControllerBase
         if (!string.IsNullOrWhiteSpace(request.Papel))
         {
             usuario.Papel = request.Papel.Trim();
+        }
+        if (!string.IsNullOrWhiteSpace(request.Senha))
+        {
+            usuario.Senha = request.Senha;
         }
 
         db.Usuarios.Update(usuario);

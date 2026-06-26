@@ -84,10 +84,26 @@ nav {
 .link-menu:hover { background: rgba(255, 255, 255, 0.08); }
 .link-menu.ativo { background: var(--azul); color: #fff; }
 
-.rodape-menu {
+/* Bloco do usuário logado no rodapé do menu */
+.usuario-menu {
     margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.usuario-info {
+    margin-bottom: 10px;
+}
+
+.usuario-info strong {
+    display: block;
+    color: #fff;
+    font-size: 14px;
+}
+
+.usuario-info small {
+    color: #9db4d0;
     font-size: 12px;
-    color: #7e98ba;
 }
 
 /* Conteúdo */
@@ -293,6 +309,89 @@ td.vazio {
 
 .aviso.mostra { opacity: 1; transform: translateY(0); }
 .aviso.erro { background: var(--vermelho); }
+
+/* Telas de login / cadastro */
+.tela-acesso {
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+    background: linear-gradient(160deg, var(--azul-escuro), #0d2740);
+    padding: 20px;
+}
+
+.cartao-acesso {
+    background: var(--cartao);
+    border-radius: 12px;
+    padding: 32px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+}
+
+.marca-acesso {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+}
+
+.marca-acesso strong { display: block; font-size: 16px; color: var(--texto); }
+.marca-acesso small { color: var(--texto-fraco); }
+
+.cartao-acesso h1 {
+    font-size: 22px;
+    margin-bottom: 4px;
+}
+
+.texto-acesso {
+    color: var(--texto-fraco);
+    font-size: 14px;
+    margin-bottom: 18px;
+}
+
+.cartao-acesso form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.cartao-acesso a {
+    color: var(--azul);
+    text-decoration: none;
+}
+.cartao-acesso a:hover { text-decoration: underline; }
+
+.bloco-largo { width: 100%; }
+
+/* Formulário estreito (tela de agendar do cliente) */
+.form-estreito {
+    max-width: 420px;
+    gap: 14px;
+}
+
+/* Campo de busca */
+.campo-busca {
+    width: 100%;
+    margin-bottom: 14px;
+}
+
+/* Recado dentro de formulário */
+.recado {
+    background: #fef3d7;
+    color: var(--amarelo);
+    border-radius: 7px;
+    padding: 10px 12px;
+    font-size: 13px;
+}
+
+/* Seletor de status na agenda */
+.select-status {
+    padding: 5px 8px;
+    font-size: 13px;
+}
+
+.escondido { display: none !important; }
 
 @media (max-width: 820px) {
     .layout { flex-direction: column; }

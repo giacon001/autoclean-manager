@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrar — AutoClean Manager</title>
+    <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body class="tela-acesso">
+    <div class="cartao-acesso">
+        <div class="marca-acesso">
+            <span class="marca-icone">AC</span>
+            <div>
+                <strong>AutoClean</strong>
+                <small>Manager</small>
+            </div>
+        </div>
+
+        <h1>Entrar</h1>
+        <p class="texto-acesso">Acesse com seu e-mail e senha.</p>
+
+        <form id="form-login">
+            <label>E-mail
+                <input type="email" name="email" required placeholder="voce@email.com">
+            </label>
+            <label>Senha
+                <input type="password" name="senha" required placeholder="••••••">
+            </label>
+            <button type="submit" class="botao bloco-largo">Entrar</button>
+        </form>
+
+        <p class="texto-acesso">
+            Não tem conta? <a href="cadastro.html">Cadastre-se</a>
+        </p>
+    </div>
+
+    <div id="aviso" class="aviso"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // Se já estiver logado, vai direto para o sistema.
+        if (obterSessao()) {
+            window.location.href = "index.html";
+        }
+
+        document.getElementById("form-login").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            try {
+                const usuario = await api.usuarios.login({
+                    email: form.email.value.trim(),
+                    senha: form.senha.value
+                });
+                salvarSessao(usuario);
+                window.location.href = "index.html";
+            } catch (erro) {
+                mostrarAviso(erro.message);
+            }
+        });
+
+        function mostrarAviso(msg) {
+            const caixa = document.getElementById("aviso");
+            caixa.textContent = msg;
+            caixa.className = "aviso mostra erro";
+            setTimeout(() => caixa.classList.remove("mostra"), 3200);
+        }
+    </script>
+</body>
+</html>

@@ -30,6 +30,7 @@ async function requisitar(metodo, rota, corpo) {
 
 const api = {
     usuarios: {
+        login: (dados) => requisitar("POST", "/usuarios/login", dados),
         listar: () => requisitar("GET", "/usuarios"),
         criar: (u) => requisitar("POST", "/usuarios", u),
         atualizar: (id, u) => requisitar("PUT", `/usuarios/${id}`, u),

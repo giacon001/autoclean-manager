@@ -41,21 +41,53 @@ docker compose down -v     # para e apaga também os dados do banco
 
 ---
 
+## Primeiro acesso
+
+O banco começa vazio, então é preciso criar a primeira conta:
+
+1. Abra `http://localhost:8080` e clique em **Cadastre-se**.
+2. O **primeiro usuário cadastrado vira Administrador** automaticamente, para
+   destravar o sistema.
+3. Com a conta de administrador você cria os demais usuários (funcionários e
+   clientes), veículos e tipos de lavagem.
+
+A partir do segundo cadastro, quem se cadastra pela tela pública entra como
+**Cliente**.
+
+---
+
+## Perfis de acesso
+
+Cada perfil enxerga um conjunto de telas diferente:
+
+- **Cliente** — agenda lavagens para os próprios veículos, acompanha o status e
+  vê seu histórico. Não cadastra veículos, usuários nem tipos de lavagem.
+- **Funcionário** — vê a agenda do dia e atualiza o status das lavagens, e
+  cadastra veículos, clientes, tipos de lavagem e agendamentos.
+- **Administrador** — tudo que o funcionário faz, mais o **Dashboard** com
+  métricas e a gestão completa de usuários (inclusive definir o papel de cada um).
+
+O login é simples (e-mail e senha) e a sessão fica guardada no navegador. Não há
+token/segurança avançada — o objetivo é apenas separar o que cada perfil acessa.
+
+---
+
 ## A interface
 
-O menu lateral tem cinco telas:
+Telas por perfil:
 
-- **Painel** — resumo do dia: agendamentos de hoje, totais e faturamento dos
-  serviços finalizados.
-- **Agendamentos** — marcar, editar e excluir lavagens. Ao escolher o tipo de
-  lavagem e o nível de sujeira, o valor estimado já aparece na hora.
-- **Veículos** — cadastrar os carros de cada cliente.
-- **Usuários** — cadastrar clientes e equipe (Cliente, Funcionário, Administrador).
-- **Tipos de Lavagem** — cadastrar os serviços com preço base e duração.
+**Cliente**
+- **Início** — resumo pessoal e próximos agendamentos.
+- **Agendar lavagem** — escolhe veículo, tipo e nível de sujeira; o valor
+  estimado já aparece na hora.
+- **Meus agendamentos** — histórico, com opção de cancelar os que estão em aberto.
 
-Cada tela tem um formulário à esquerda e a lista à direita. O botão **Editar**
-de uma linha carrega os dados no formulário; **Salvar** grava (cria ou atualiza);
-**Excluir** remove.
+**Funcionário e Administrador**
+- **Agenda do dia** — lavagens de hoje, com troca de status direto na lista.
+- **Agendamentos / Veículos / Usuários / Tipos de Lavagem** — cadastro completo
+  (criar, editar e excluir), com busca de veículos por placa ou cliente.
+- **Dashboard** (só Administrador) — faturamento, ticket médio e lavagens por
+  tipo e por status.
 
 A interface conversa com a API por `fetch` e, como é servida pela própria API,
 não precisa de configuração de CORS nem de outro servidor.
@@ -111,6 +143,9 @@ Todos seguem o padrão REST com CRUD completo (GET, POST, PUT, DELETE):
 | Tipos de Lavagem | `/api/tipos-lavagem`   |
 | Agendamentos     | `/api/agendamentos`    |
 
+O login é feito em `POST /api/usuarios/login` (e-mail e senha). A senha nunca é
+devolvida nas respostas da API.
+
 Há também a coleção `AutocleanManager.Api.postman_collection.json` para importar
 no Postman ou Insomnia.
 
@@ -125,9 +160,12 @@ AutocleanManager.Api/
   Data/             DbContext e cálculo de preço
   Migrations/       criação do banco
   wwwroot/          interface web
-    index.html
+    login.html       tela de login
+    cadastro.html    tela de cadastro
+    index.html       sistema (telas por perfil)
     css/estilo.css
     js/api.js        chamadas à API
+    js/auth.js       sessão e controle de perfil
     js/app.js        lógica das telas
 docker-compose.yml  banco + API
 ```

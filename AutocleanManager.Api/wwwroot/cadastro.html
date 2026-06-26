@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro — AutoClean Manager</title>
+    <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body class="tela-acesso">
+    <div class="cartao-acesso">
+        <div class="marca-acesso">
+            <span class="marca-icone">AC</span>
+            <div>
+                <strong>AutoClean</strong>
+                <small>Manager</small>
+            </div>
+        </div>
+
+        <h1>Criar conta</h1>
+        <p class="texto-acesso">Crie sua conta de cliente para agendar lavagens.</p>
+
+        <form id="form-cadastro">
+            <label>Nome
+                <input type="text" name="nome" required placeholder="Seu nome">
+            </label>
+            <label>E-mail
+                <input type="email" name="email" required placeholder="voce@email.com">
+            </label>
+            <label>Senha
+                <input type="password" name="senha" required minlength="4" placeholder="mínimo 4 caracteres">
+            </label>
+            <button type="submit" class="botao bloco-largo">Cadastrar</button>
+        </form>
+
+        <p class="texto-acesso">
+            Já tem conta? <a href="login.html">Entrar</a>
+        </p>
+    </div>
+
+    <div id="aviso" class="aviso"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        if (obterSessao()) {
+            window.location.href = "index.html";
+        }
+
+        document.getElementById("form-cadastro").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const dados = {
+                nome: form.nome.value.trim(),
+                email: form.email.value.trim(),
+                senha: form.senha.value,
+                papel: "Cliente"
+            };
+            try {
+                await api.usuarios.criar(dados);
+                // Entra automaticamente depois de cadastrar.
+                const usuario = await api.usuarios.login({ email: dados.email, senha: dados.senha });
+                salvarSessao(usuario);
+                window.location.href = "index.html";
+            } catch (erro) {
+                mostrarAviso(erro.message);
+            }
+        });
+
+        function mostrarAviso(msg) {
+            const caixa = document.getElementById("aviso");
+            caixa.textContent = msg;
+            caixa.className = "aviso mostra erro";
+            setTimeout(() => caixa.classList.remove("mostra"), 3200);
+        }
+    </script>
+</body>
+</html>
